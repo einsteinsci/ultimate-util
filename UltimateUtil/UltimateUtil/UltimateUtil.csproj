@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooleanUtil.cs" />
+    <Compile Include="CollectionUtil.cs" />
+    <Compile Include="ReflectionUtil.cs" />
     <Compile Include="TextUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
