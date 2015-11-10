@@ -178,6 +178,20 @@ namespace UltimateUtil
 			return res;
 		}
 
+		/// <summary>
+		/// Runs <see cref="string.Format(string, object[])"/> through an extension method.
+		/// </summary>
+		/// <param name="formatted">String to format</param>
+		/// <param name="formatArgs">Arguments of format</param>
+		/// <returns>Post-formatting string</returns>
+		public static string With(this string formatted, params object[] formatArgs)
+		{
+			return string.Format(formatted, formatArgs);
+		}
 
+		public static bool EqualsIgnoreCase(this string str, string other)
+		{
+			return str.Equals(other, StringComparison.OrdinalIgnoreCase);
+		}
 	}
 }

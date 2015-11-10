@@ -94,6 +94,15 @@ namespace UltimateUtil
 			return array.SelectRandom(new Random());
 		}
 
+		public static T OneOf<T>(this Random rand, params T[] options)
+		{
+			return options.SelectRandom(rand);
+		}
+		public static T OneOf<T>(this Random rand, IList<T> options)
+		{
+			return options.SelectRandom(rand);
+		}
+
 		public static void Put<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
 		{
 			if (dictionary.ContainsKey(key))
@@ -114,6 +123,27 @@ namespace UltimateUtil
 			}
 
 			return default(TValue);
+		}
+
+		public static bool IsOneOf<TValue>(this TValue tested, params TValue[] possibleValues)
+		{
+			if (possibleValues == null)
+			{
+				throw new ArgumentNullException(nameof(possibleValues));
+			}
+
+			return possibleValues.Contains(tested);
+		}
+
+		public static string ToDelimitedString<T>(this IEnumerable<T> ien, Func<T, string> toString, string separator)
+		{
+			List<string> converted = new List<string>();
+			foreach (T t in ien)
+			{
+				converted.Add(toString(t));
+			}
+
+			return string.Join(separator, converted);
 		}
 	}
 }

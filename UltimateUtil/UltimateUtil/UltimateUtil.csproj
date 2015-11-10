@@ -43,9 +43,12 @@
   <ItemGroup>
     <Compile Include="BooleanUtil.cs" />
     <Compile Include="CollectionUtil.cs" />
+    <Compile Include="EnumUtils.cs" />
+    <Compile Include="NumberUtils.cs" />
     <Compile Include="ReflectionUtil.cs" />
     <Compile Include="TextUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThreadUtil.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

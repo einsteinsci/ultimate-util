@@ -92,6 +92,9 @@ namespace UltimateUtil
 			}
 		}
 
-
+		public static bool NextBool(this Random rand)
+		{
+			return rand.Next(2) == 0;
+		}
 	}
 }
