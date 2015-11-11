@@ -44,6 +44,9 @@
     <Compile Include="BooleanUtil.cs" />
     <Compile Include="CollectionUtil.cs" />
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="Logging\LogEventArgs.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\LoggerPresets.cs" />
     <Compile Include="NumberUtils.cs" />
     <Compile Include="ReflectionUtil.cs" />
     <Compile Include="TextUtil.cs" />

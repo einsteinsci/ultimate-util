@@ -184,7 +184,7 @@ namespace UltimateUtil
 		/// <param name="formatted">String to format</param>
 		/// <param name="formatArgs">Arguments of format</param>
 		/// <returns>Post-formatting string</returns>
-		public static string With(this string formatted, params object[] formatArgs)
+		public static string Fmt(this string formatted, params object[] formatArgs)
 		{
 			return string.Format(formatted, formatArgs);
 		}
