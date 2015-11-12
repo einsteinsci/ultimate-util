@@ -94,5 +94,14 @@ namespace UltimateUtil
 		{
 			applied(obj);
 		}
+
+		public static bool IsNullOrDefault<T>(this T? t) where T : struct
+		{
+			return t == null || t.Value.Equals(default(T));
+		}
+		public static bool IsNull<T>(this T t) where T : class
+		{
+			return t == null;
+		}
 	}
 }

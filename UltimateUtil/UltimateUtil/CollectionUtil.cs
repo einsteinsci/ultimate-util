@@ -125,6 +125,24 @@ namespace UltimateUtil
 			return default(TValue);
 		}
 
+		public static T GetIgnoreCase<T>(this IDictionary<string, T> dictionary, string caseInsensitiveKey)
+		{
+			if (caseInsensitiveKey.IsNullOrEmpty())
+			{
+				throw new ArgumentException("Cannot search for key of empty string");
+			}
+
+			T res = default(T);
+			dictionary.ForEach((k, v) =>
+			{
+				if (k.Equals(caseInsensitiveKey, StringComparison.InvariantCultureIgnoreCase))
+				{
+					res = v;
+				}
+			});
+
+			return res;
+		}
 		public static bool ContainsKeyIgnoreCase<TValue>(this IDictionary<string, TValue> dict, string key)
 		{
 			foreach (string k in dict.Keys)
@@ -179,6 +197,26 @@ namespace UltimateUtil
 
 				yield return converted;
 			}
+		}
+
+		/// <summary>
+		/// Converts anonymous types into a <see cref="Dictionary{TKey, TValue}"/>.
+		/// </summary>
+		/// <param name="o">Anonymous type object to convert</param>
+		/// <returns>Dictionary with member names as keys</returns>
+		public static Dictionary<string, object> ToDictionary(this object o)
+		{
+			var dictionary = new Dictionary<string, object>();
+
+			foreach (var propertyInfo in o.GetType().GetProperties())
+			{
+				if (propertyInfo.GetIndexParameters().Length == 0)
+				{
+					dictionary.Add(propertyInfo.Name, propertyInfo.GetValue(o, null));
+				}
+			}
+
+			return dictionary;
 		}
 
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> input)

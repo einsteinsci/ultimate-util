@@ -121,5 +121,34 @@ namespace UltimateUtil
 		{
 			return inherited.IsAssignableFrom(inheriting);
 		}
+
+		/// <summary>
+		/// Returns whether or not the specified type is <see cref="Nullable{T}"/>.
+		/// </summary>
+		/// <param name="type">A <see cref="Type"/>.</param>
+		/// <returns>True if the specified type is <see cref="Nullable{T}"/>; otherwise, false.</returns>
+		/// <remarks>Use <see cref="Nullable.GetUnderlyingType"/> to access the underlying type.</remarks>
+		public static bool IsNullableType(this Type type)
+		{
+			type.ThrowIfNull(nameof(type));
+
+			return type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>));
+		}
+
+		public static object GetPrivateField(this Type type, string fieldName, object instance = null)
+		{
+			FieldInfo field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+			return field.GetValue(instance);
+		}
+		public static void SetPrivateField(this Type type, string fieldName, object value, object instance = null)
+		{
+			FieldInfo field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+			field.SetValue(instance, value);
+		}
+		public static object RunPrivateMethod(this Type type, string methodName, object instance, params object[] args)
+		{
+			MethodInfo method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+			return method.Invoke(instance, args);
+		}
 	}
 }

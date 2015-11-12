@@ -193,12 +193,39 @@ namespace UltimateUtil
 		{
 			return str.Equals(other, StringComparison.OrdinalIgnoreCase);
 		}
+		public static bool StartsWithIgnoreCase(this string str, string other)
+		{
+			return str.StartsWith(other, StringComparison.OrdinalIgnoreCase);
+		}
+		public static bool EndsWithIgnoreCase(this string str, string other)
+		{
+			return str.EndsWith(other, StringComparison.OrdinalIgnoreCase);
+		}
+		public static bool ContainsIgnoreCase(this string str, string other)
+		{
+			return str.ToLower().Contains(other.ToLower());
+		}
+
+		public static bool IsNullOrEmpty(this string str)
+		{
+			return string.IsNullOrEmpty(str);
+		}
 
 		public static string Reverse(this string str)
 		{
 			char[] array = str.ToCharArray();
 			Array.Reverse(array);
 			return new string(array);
+		}
+
+		public static string Shorten(this string str, int maxLength, string suffix = "...")
+		{
+			if (str.IsNullOrEmpty() || str.Length <= maxLength)
+			{
+				return str;
+			}
+
+			return str.Substring(0, maxLength) + suffix;
 		}
 	}
 }
