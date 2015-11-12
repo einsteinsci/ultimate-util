@@ -29,15 +29,26 @@ namespace UltimateUtil.Registries
 		{
 			foreach (Type t in assembly.GetTypesWithAttribute<TAtt>())
 			{
-				if (t.InheritsFrom<TValue>())
+				TryRegisterType(t);
+			}
+		}
+		public virtual bool TryRegisterType(Type t)
+		{
+			if (t.InheritsFrom<TValue>())
+			{
+				TValue inst = Activator.CreateInstance(t) as TValue;
+				if (inst != null)
 				{
-					TValue inst = Activator.CreateInstance(t) as TValue;
-					if (inst != null)
-					{
-						Register(inst.RegistryName, inst);
-					}
+					Register(inst.RegistryName, inst);
+					return true;
 				}
 			}
+
+			return false;
+		}
+		public bool TryRegisterType<TReg>() where TReg : TValue
+		{
+			return TryRegisterType(typeof(TReg));
 		}
 	}
 }
