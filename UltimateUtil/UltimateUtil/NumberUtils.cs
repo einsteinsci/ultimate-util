@@ -42,8 +42,23 @@ namespace UltimateUtil
 
 		public static string ToCurrency(this double value, string cultureName = "en-US")
 		{
-			CultureInfo currentCulture = new CultureInfo(cultureName);
-			return (string.Format(currentCulture, "{0:C}", value));
+			CultureInfo culture = new CultureInfo(cultureName);
+			return (string.Format(culture, "{0:C}", value));
+		}
+
+		public static bool IsOdd(this int value)
+		{
+			return value % 2 == 1;
+		}
+
+		public static bool IsEven(this int value)
+		{
+			return value % 2 == 0;
+		}
+
+		public static bool IsMultipleOf(this int value, int factor)
+		{
+			return value % factor == 0;
 		}
 	}
 }

@@ -218,6 +218,14 @@ namespace UltimateUtil
 			return new string(array);
 		}
 
+		public static void ThrowIfNullOrEmpty(this string str, string varname)
+		{
+			if (str.IsNullOrEmpty())
+			{
+				throw new ArgumentNullException(varname);
+			}
+		}
+
 		public static string Shorten(this string str, int maxLength, string suffix = "...")
 		{
 			if (str.IsNullOrEmpty() || str.Length <= maxLength)

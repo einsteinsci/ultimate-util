@@ -14,7 +14,7 @@ namespace UltimateUtil
 		/// </summary>
 		/// <param name="delay">Amount of time to delay the code</param>
 		/// <param name="todo">Code to run</param>
-		public static void RunDelayed(TimeSpan delay, Action todo)
+		public static Thread RunDelayed(TimeSpan delay, Action todo)
 		{
 			Thread thread = new Thread(() => 
 			{
@@ -25,15 +25,17 @@ namespace UltimateUtil
 			thread.IsBackground = true;
 
 			thread.Start();
+
+			return thread;
 		}
 		/// <summary>
 		/// Runs code on a separate thread after a delay in miliseconds.
 		/// </summary>
 		/// <param name="milisecondsDelay">Amount of time to delay the code by, in miliseconds</param>
 		/// <param name="todo">Code to run</param>
-		public static void RunDelayed(double milisecondsDelay, Action todo)
+		public static Thread RunDelayed(double milisecondsDelay, Action todo)
 		{
-			RunDelayed(TimeSpan.FromMilliseconds(milisecondsDelay), todo);
+			return RunDelayed(TimeSpan.FromMilliseconds(milisecondsDelay), todo);
 		}
 	}
 }

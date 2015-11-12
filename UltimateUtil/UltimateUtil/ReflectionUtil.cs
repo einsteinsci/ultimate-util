@@ -13,9 +13,56 @@ namespace UltimateUtil
 		{
 			return tested.GetCustomAttributes(attribute, false).Length > 0;
 		}
-		public static bool HasAttribute<TAtt>(this MemberInfo tested)
+		public static bool HasAttribute<TAtt>(this MemberInfo tested) where TAtt : Attribute
 		{
 			return tested.HasAttribute(typeof(TAtt));
+		}
+
+		public static List<Type> GetTypesWithAttribute(this Assembly a, Type attribute)
+		{
+			if (!attribute.InheritsFrom<Attribute>())
+			{
+				throw new ArgumentException("Type {0} must inherit from System.Attribute.", nameof(attribute));
+			}
+
+			List<Type> res = new List<Type>();
+			foreach (Type t in a.GetTypes())
+			{
+				if (t.HasAttribute(attribute))
+				{
+					res.Add(t);
+				}
+			}
+
+			return res;
+		}
+		public static List<Type> GetTypesWithAttribute<TAtt>(this Assembly a) where TAtt : Attribute
+		{
+			return a.GetTypesWithAttribute(typeof(TAtt));
+		}
+
+		public static List<MemberInfo> GetMembersWithAttribute(this Type type, Type att, MemberTypes filters = MemberTypes.All)
+		{
+			if (!att.InheritsFrom<Attribute>())
+			{
+				throw new ArgumentException("Type {0} must inherit from System.Attribute.", nameof(att));
+			}
+
+			List<MemberInfo> res = new List<MemberInfo>();
+			foreach (MemberInfo m in type.GetMembers())
+			{
+				if (filters.HasFlag(m.MemberType) && m.HasAttribute(att))
+				{
+					res.Add(m);
+				}
+			}
+
+			return res;
+		}
+		public static List<MemberInfo> GetMembersWithAttribute<TAtt>(this Type type, MemberTypes filters = MemberTypes.All)
+			where TAtt : Attribute
+		{
+			return type.GetMembersWithAttribute(typeof(TAtt), filters);
 		}
 
 		/// <summary>
@@ -120,6 +167,11 @@ namespace UltimateUtil
 		public static bool InheritsFrom(this Type inheriting, Type inherited)
 		{
 			return inherited.IsAssignableFrom(inheriting);
+		}
+
+		public static bool InheritsFrom<TBase>(this Type inheriting)
+		{
+			return inheriting.InheritsFrom(typeof(TBase));
 		}
 
 		/// <summary>
