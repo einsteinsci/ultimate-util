@@ -121,15 +121,5 @@ namespace UltimateUtil
 		{
 			return inherited.IsAssignableFrom(inheriting);
 		}
-
-
-		public static void With<T>(this T obj, Action<T> applied) where T : class
-		{
-			applied(obj);
-		}
-		public static void With<T>(ref T obj, Action<T> applied) where T : struct
-		{
-			applied(obj);
-		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,6 +96,11 @@ namespace UltimateUtil
 		public static bool NextBool(this Random rand)
 		{
 			return rand.Next(2) == 0;
+		}
+		
+		public static bool Not(this bool b)
+		{
+			return !b;
 		}
 	}
 }

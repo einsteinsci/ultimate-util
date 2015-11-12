@@ -211,6 +211,15 @@ namespace UltimateUtil.Logging
 		}
 		#endregion level log methods
 
+		public void Error(Exception e)
+		{
+			Error("Exception caught! {0}: {1}", e.GetType().Name, e.ToString());
+		}
+		public void LogError(Exception e)
+		{
+			Instance.Error(e);
+		}
+
 		public void Dispose()
 		{
 			Dispose(true);

@@ -4,58 +4,41 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UltimateUtil.UserInteraction;
 
 namespace UltimateUtil.Logging
 {
-	public static class LoggerPresets
+	public static class PresetsLogger
 	{
-		public enum Preset
+		public enum LoggerPresetType
 		{
 			Console,
 			FileOnly,
 			Debugger,
 		}
 
-		public static void Initialize(Preset preset = Preset.Console, string filePath = null,
+		public static void Initialize(LoggerPresetType preset = LoggerPresetType.Console, string filePath = null,
 			LogLevel minOutputLogging = LogLevel.Info, LogLevel minFileLogging = LogLevel.Debug)
 		{
 			Logger.Initialize(filePath, true, minOutputLogging, minFileLogging);
 
 			switch (preset)
 			{
-				case Preset.Console:
-					Logger.Logging += ConsoleLog;
-					Logger.LoggingPart += ConsoleLogPart;
+				case LoggerPresetType.Console:
+					PresetVersatileConsoleIO.Initialize(LogLevel.Interface.GetLevelColor());
+					Logger.Logging += (s, e) => VersatileIO.WriteLine(e.Message, e.Level.GetLevelColor());
+					Logger.LoggingPart += (s, e) => VersatileIO.Write(e.Message, e.Level.GetLevelColor());
 					break;
-				case Preset.FileOnly:
+				case LoggerPresetType.FileOnly:
 					// already handled in Logger.
 					break;
-				case Preset.Debugger:
+				case LoggerPresetType.Debugger:
 					Logger.Logging += DebuggerLog;
 					Logger.LoggingPart += DebuggerLogPart;
 					break;
 				default:
 					break;
 			}
-		}
-
-		#region Console
-		public static void ConsoleLog(object sender, LogEventArgs e)
-		{
-			ConsoleColor buf = Console.ForegroundColor;
-
-			Console.ForegroundColor = GetLevelColor(e.Level);
-			Console.WriteLine(e.Message);
-			Console.ForegroundColor = buf;
-		}
-
-		public static void ConsoleLogPart(object sender, LogEventArgs e)
-		{
-			ConsoleColor buf = Console.ForegroundColor;
-
-			Console.ForegroundColor = GetLevelColor(e.Level);
-			Console.Write(e.Message);
-			Console.ForegroundColor = buf;
 		}
 
 		public static ConsoleColor GetLevelColor(this LogLevel level)
@@ -82,12 +65,10 @@ namespace UltimateUtil.Logging
 					throw new ArgumentOutOfRangeException(nameof(level));
 			}
 		}
-		#endregion Console
-
-		#region Debugger
+		
 		public static void DebuggerLog(object sender, LogEventArgs e)
 		{
-			if (e.Level.IsOneOf(LogLevel.Error, LogLevel.Fatal))
+			if (e.Level.IsAnyOf(LogLevel.Error, LogLevel.Fatal))
 			{
 				Debug.Fail(e.Message);
 				Debug.WriteLine("");
@@ -99,7 +80,7 @@ namespace UltimateUtil.Logging
 		}
 		public static void DebuggerLogPart(object sender, LogEventArgs e)
 		{
-			if (e.Level.IsOneOf(LogLevel.Error, LogLevel.Fatal))
+			if (e.Level.IsAnyOf(LogLevel.Error, LogLevel.Fatal))
 			{
 				Debug.Fail(e.Message);
 			}
@@ -108,6 +89,5 @@ namespace UltimateUtil.Logging
 				Debug.Write(e.Message);
 			}
 		}
-		#endregion Debugger
 	}
 }

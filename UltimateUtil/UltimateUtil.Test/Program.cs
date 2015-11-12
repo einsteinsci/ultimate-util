@@ -11,7 +11,7 @@ namespace UltimateUtil.Test
 	{
 		static void Main(string[] args)
 		{
-			LoggerPresets.Initialize(LoggerPresets.Preset.Console, null, LogLevel.Debug);
+			PresetsLogger.Initialize();
 			Logger log = Logger.Instance;
 
 			log.Debug("Debug text");

@@ -125,7 +125,32 @@ namespace UltimateUtil
 			return default(TValue);
 		}
 
-		public static bool IsOneOf<TValue>(this TValue tested, params TValue[] possibleValues)
+		public static bool ContainsKeyIgnoreCase<TValue>(this IDictionary<string, TValue> dict, string key)
+		{
+			foreach (string k in dict.Keys)
+			{
+				if (k.EqualsIgnoreCase(key))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+		public static bool ContainsValueIgnoreCase<TKey>(this IDictionary<TKey, string> dict, string value)
+		{
+			foreach (string v in dict.Values)
+			{
+				if (v.EqualsIgnoreCase(value))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool IsAnyOf<TValue>(this TValue tested, params TValue[] possibleValues)
 		{
 			if (possibleValues == null)
 			{
@@ -144,6 +169,26 @@ namespace UltimateUtil
 			}
 
 			return string.Join(separator, converted);
+		}
+
+		public static IEnumerable<TResult> ConvertAll<TInput, TResult>(this IEnumerable<TInput> input, Func<TInput, TResult> converter)
+		{
+			foreach (TInput i in input)
+			{
+				TResult converted = converter(i);
+
+				yield return converted;
+			}
+		}
+
+		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> input)
+		{
+			return input ?? Enumerable.Empty<T>();
+		}
+
+		public static List<T> List<T>(params T[] items)
+		{
+			return new List<T>(items);
 		}
 	}
 }

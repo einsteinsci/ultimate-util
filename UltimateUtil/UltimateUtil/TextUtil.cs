@@ -193,5 +193,12 @@ namespace UltimateUtil
 		{
 			return str.Equals(other, StringComparison.OrdinalIgnoreCase);
 		}
+
+		public static string Reverse(this string str)
+		{
+			char[] array = str.ToCharArray();
+			Array.Reverse(array);
+			return new string(array);
+		}
 	}
 }

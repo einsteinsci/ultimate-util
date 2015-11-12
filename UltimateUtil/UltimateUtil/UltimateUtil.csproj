@@ -43,15 +43,19 @@
   <ItemGroup>
     <Compile Include="BooleanUtil.cs" />
     <Compile Include="CollectionUtil.cs" />
+    <Compile Include="ConversionUtil.cs" />
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="FluidUtils.cs" />
     <Compile Include="Logging\LogEventArgs.cs" />
     <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Logging\LoggerPresets.cs" />
+    <Compile Include="Logging\PresetsLogger.cs" />
     <Compile Include="NumberUtils.cs" />
     <Compile Include="ReflectionUtil.cs" />
     <Compile Include="TextUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThreadUtil.cs" />
+    <Compile Include="UserInteraction\PresetVersatileConsoleIO.cs" />
+    <Compile Include="UserInteraction\VersatileIO.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

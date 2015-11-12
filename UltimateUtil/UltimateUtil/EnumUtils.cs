@@ -48,6 +48,24 @@ namespace UltimateUtil
 
 			return res;
 		}
+
+		public static T ToEnum<T>(this string str, bool ignoreCase = false) where T : struct
+		{
+			Type t = typeof(T);
+			if (!t.InheritsFrom(typeof(Enum)))
+			{
+				throw new ArgumentException("Type " + t.ToString() + " is not an enum.");
+			}
+
+			str.ThrowIfNull(nameof(str));
+			
+			if (str == "")
+			{
+				throw new ArgumentException("Input string cannot be empty.");
+			}
+
+			return (T)Enum.Parse(t, str, ignoreCase);
+		}
 	}
 
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
