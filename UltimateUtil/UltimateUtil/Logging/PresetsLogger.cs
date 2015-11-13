@@ -8,15 +8,37 @@ using UltimateUtil.UserInteraction;
 
 namespace UltimateUtil.Logging
 {
+	/// <summary>
+	/// Provides presets for initializing a <see cref="Logger"/> for common scenarios.
+	/// </summary>
 	public static class PresetsLogger
 	{
+		/// <summary>
+		/// Type of presets available 
+		/// </summary>
 		public enum LoggerPresetType
 		{
+			/// <summary>
+			/// Set up console logging
+			/// </summary>
 			Console,
+			/// <summary>
+			/// Set up file logging only
+			/// </summary>
 			FileOnly,
+			/// <summary>
+			/// Set up logging into the VS Debugger
+			/// </summary>
 			Debugger,
 		}
 
+		/// <summary>
+		/// Initializes a <see cref="Logger"/> to a given <paramref name="preset"/> with various settings.
+		/// </summary>
+		/// <param name="preset">Determines which preset is set up</param>
+		/// <param name="filePath">Path for file output. <c>null</c> indicates no file output.</param>
+		/// <param name="minOutputLogging">Minimum output log level</param>
+		/// <param name="minFileLogging">Minimum file output log level</param>
 		public static void Initialize(LoggerPresetType preset = LoggerPresetType.Console, string filePath = null,
 			LogLevel minOutputLogging = LogLevel.Info, LogLevel minFileLogging = LogLevel.Debug)
 		{
@@ -41,6 +63,11 @@ namespace UltimateUtil.Logging
 			}
 		}
 
+		/// <summary>
+		/// Converts a <see cref="LogLevel"/> into a <see cref="ConsoleColor"/>.
+		/// </summary>
+		/// <param name="level">Converted <see cref="LogLevel"/>.</param>
+		/// <returns>The <see cref="ConsoleColor"/> most fitting for <paramref name="level"/>.</returns>
 		public static ConsoleColor GetLevelColor(this LogLevel level)
 		{
 			switch (level)
@@ -66,6 +93,11 @@ namespace UltimateUtil.Logging
 			}
 		}
 		
+		/// <summary>
+		/// Logs a line in the VS debugger.
+		/// </summary>
+		/// <param name="sender">Sending object (usually a <see cref="Logger"/>)</param>
+		/// <param name="e"><see cref="LogEventArgs"/> containing message info</param>
 		public static void DebuggerLog(object sender, LogEventArgs e)
 		{
 			if (e.Level.IsAnyOf(LogLevel.Error, LogLevel.Fatal))
@@ -78,6 +110,11 @@ namespace UltimateUtil.Logging
 				Debug.WriteLine(e.Message);
 			}
 		}
+		/// <summary>
+		/// Logs a <see cref="string"/> into the VS debugger.
+		/// </summary>
+		/// <param name="sender">Sending object (usually a <see cref="Logger"/>)</param>
+		/// <param name="e"><see cref="LogEventArgs"/> containing message info</param>
 		public static void DebuggerLogPart(object sender, LogEventArgs e)
 		{
 			if (e.Level.IsAnyOf(LogLevel.Error, LogLevel.Fatal))
