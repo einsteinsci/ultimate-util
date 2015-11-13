@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace UltimateUtil.Logging
 {
+	/// <summary>
+	/// Various levels of log importance. Often determines output color and visibility.
+	/// </summary>
 	public enum LogLevel
 	{
 		Debug = 0,
