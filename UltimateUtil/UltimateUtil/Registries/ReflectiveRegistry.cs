@@ -7,13 +7,24 @@ using System.Threading.Tasks;
 
 namespace UltimateUtil.Registries
 {
+	/// <summary>
+	/// Extension of <see cref="DynamicRegistry{T}"/> with the ability to load
+	/// items via reflection with attributes.
+	/// </summary>
+	/// <typeparam name="TValue">Base class of items registered</typeparam>
+	/// <typeparam name="TAtt">Attribute applied to classes to be registered</typeparam>
 	public class ReflectiveRegistry<TValue, TAtt> : DynamicRegistry<TValue>
 		where TValue : class, IRegisterable
 		where TAtt : Attribute
 	{
+		/// <summary>
+		/// Instantiates a new instance of <see cref="ReflectiveRegistry{TValue, TAtt}"/>,
+		/// with the option to load all items via reflection immediately.
+		/// </summary>
+		/// <param name="autoLoad">Whether to load via reflection within this constructor.</param>
 		public ReflectiveRegistry(bool autoLoad = false)
 		{
-			Registry = new Dictionary<string, TValue>();
+			registry = new Dictionary<string, TValue>();
 
 			if (autoLoad)
 			{
@@ -21,10 +32,19 @@ namespace UltimateUtil.Registries
 			}
 		}
 
+		/// <summary>
+		/// Loads all items applied with <see cref="TAtt"/> within the calling
+		/// <see cref="Assembly"/> via reflection.
+		/// </summary>
 		public void Load()
 		{
 			Load(Assembly.GetCallingAssembly());
 		}
+		/// <summary>
+		/// Loads all items applied with <see cref="TAtt"/> within a given
+		/// <see cref="Assembly"/> via reflection
+		/// </summary>
+		/// <param name="assembly">Assembly from where to search for registered classes</param>
 		public virtual void Load(Assembly assembly)
 		{
 			foreach (Type t in assembly.GetTypesWithAttribute<TAtt>())
@@ -32,6 +52,15 @@ namespace UltimateUtil.Registries
 				TryRegisterType(t);
 			}
 		}
+		/// <summary>
+		/// Tries to register a <see cref="Type"/> that inherits from <see cref="TValue"/>,
+		/// using <see cref="Activator.CreateInstance(Type)"/>.
+		/// </summary>
+		/// <param name="t">Type of item to register</param>
+		/// <returns>
+		/// <c>true</c> if registry was successful, <c>false</c> if there was something already 
+		/// registered under the key, or if <paramref name="t"/> does not inherit from <see cref="TValue"/>.
+		/// </returns>
 		public virtual bool TryRegisterType(Type t)
 		{
 			if (t.InheritsFrom<TValue>())
@@ -39,16 +68,47 @@ namespace UltimateUtil.Registries
 				TValue inst = Activator.CreateInstance(t) as TValue;
 				if (inst != null)
 				{
-					Register(inst.RegistryName, inst);
-					return true;
+					try
+					{
+						Register(inst.RegistryName, inst);
+						return true;
+					}
+					catch (ArgumentException)
+					{
+						return false;
+					}
 				}
 			}
 
 			return false;
 		}
+		/// <summary>
+		/// Tries to register a <see cref="Type"/> that inherits from <see cref="TValue"/>,
+		/// using <see cref="Activator.CreateInstance(Type)"/>.
+		/// </summary>
+		/// <typeparam name="TReg">Type of item to register</typeparam>
+		/// <returns>
+		/// <c>true</c> if registry was successful, <c>false</c> if there was something already
+		/// registered under the key.
+		/// </returns>
 		public bool TryRegisterType<TReg>() where TReg : TValue
 		{
 			return TryRegisterType(typeof(TReg));
+		}
+
+		/// <summary>
+		/// Retrieves the <see cref="Type"/> of the item registered under <paramref name="key"/>.
+		/// </summary>
+		/// <param name="key">Key of item to search for</param>
+		/// <returns>The <see cref="Type"/> of the item, if found.</returns>
+		public Type GetRegisteredType(string key)
+		{
+			if (!registry.ContainsKey(key))
+			{
+				throw new KeyNotFoundException("No key found by name of {0}.".Fmt(key));
+			}
+
+			return this[key].GetType();
 		}
 	}
 }

@@ -10,15 +10,19 @@ namespace UltimateUtil.Test
 	[TestClass]
 	public class TextUtil_Test
 	{
-		[TestMethod]
+		public TextUtil_Test()
+		{ }
+
+		[TestMethod, TestCategory("text")]
 		public void IsNullOrEmpty()
 		{
 			string n = null;
-			string emp = string.Empty;
+			string emp = "";
 			string space = " ";
 
-			Assert.IsTrue(n.IsNullOrEmpty() && emp.IsNullOrEmpty());
-			Assert.IsFalse(space.IsNullOrEmpty());
+			Assert.IsTrue(emp.IsNullOrEmpty(), "Empty string failed.");
+			Assert.IsTrue(n.IsNullOrEmpty(), "Null string failed.");
+			Assert.IsFalse(space.IsNullOrEmpty(), "Space string failed.");
 		}
 	}
 }
