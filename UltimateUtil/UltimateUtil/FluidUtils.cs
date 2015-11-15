@@ -47,6 +47,18 @@ namespace UltimateUtil
 				action(kvp.Key, kvp.Value);
 			}
 		}
+		public static bool ForEach<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, TValue, bool> action)
+		{
+			foreach (KeyValuePair<TKey, TValue> kvp in dictionary)
+			{
+				if (action(kvp.Key, kvp.Value))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 
 		public static T CastThrow<T>(this object obj)
 		{
@@ -76,6 +88,34 @@ namespace UltimateUtil
 		public static bool Is<T>(this object obj)
 		{
 			return obj is T;
+		}
+
+		/// <summary>
+		/// Returns if the value is equal to any of the supplied values
+		/// </summary>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="tested"></param>
+		/// <param name="possibleValues"></param>
+		/// <returns></returns>
+		public static bool IsAnyOf<TValue>(this TValue tested, params TValue[] possibleValues)
+		{
+			if (possibleValues == null)
+			{
+				throw new ArgumentNullException(nameof(possibleValues));
+			}
+
+			return possibleValues.Contains(tested);
+		}
+
+		/// <summary>
+		/// Creates a list from the given items
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="items"></param>
+		/// <returns></returns>
+		public static List<T> List<T>(params T[] items)
+		{
+			return new List<T>(items);
 		}
 
 		public static void ThrowIfNull(this object obj, string varName)
@@ -117,6 +157,16 @@ namespace UltimateUtil
 			{
 				handler(sender, e);
 			}
+		}
+
+		/// <summary>
+		/// Inverts a <see cref="bool"/> for fluid programming.
+		/// </summary>
+		/// <param name="b">Value to invert</param>
+		/// <returns><c>!<paramref name="b"/></c></returns>
+		public static bool Not(this bool b)
+		{
+			return !b;
 		}
 	}
 }

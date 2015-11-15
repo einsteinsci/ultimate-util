@@ -7,54 +7,107 @@ using System.Threading.Tasks;
 
 namespace UltimateUtil
 {
+	/// <summary>
+	/// Various utility functions involving <see cref="bool"/> values
+	/// </summary>
 	public static class BooleanUtil
 	{
 		#region integer to bool
+		/// <summary>
+		/// Converts a <see cref="long"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="l">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="l"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this long l)
 		{
 			return l != 0;
 		}
+		/// <summary>
+		/// Converts a <see cref="ulong"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="l">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="l"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this ulong l)
 		{
 			return l != 0;
 		}
+		/// <summary>
+		/// Converts an <see cref="int"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="n">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="n"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this int n)
 		{
 			return n != 0;
 		}
+		/// <summary>
+		/// Converts a <see cref="uint"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="n">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="n"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this uint n)
 		{
 			return n != 0;
 		}
+		/// <summary>
+		/// Converts a <see cref="short"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="s">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="s"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this short s)
 		{
 			return s != 0;
 		}
+		/// <summary>
+		/// Converts a <see cref="ushort"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="s">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="s"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this ushort s)
 		{
 			return s != 0;
 		}
+		/// <summary>
+		/// Converts a <see cref="byte"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="b">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="b"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this byte b)
 		{
 			return b != 0;
 		}
+		/// <summary>
+		/// Converts an <see cref="sbyte"/> into a <see cref="bool"/>.
+		/// </summary>
+		/// <param name="b">Integer value to convert</param>
+		/// <returns><c>false</c> if <c><paramref name="b"/> == 0</c>, <c>true</c> otherwise.</returns>
 		public static bool ToBool(this sbyte b)
 		{
 			return b != 0;
 		}
 		#endregion integer to bool
 
+		/// <summary>
+		/// Converts a <see cref="bool"/> into a <see cref="byte"/>.
+		/// </summary>
+		/// <param name="b">Boolean to convert</param>
+		/// <returns>1 if <c>true</c>, 0 if <c>false</c></returns>
 		public static byte ToByte(this bool b)
 		{
-			return b ? (byte)0 : (byte)1;
+			return (byte)b.ToInt();
 		}
+		/// <summary>
+		/// Converts a <see cref="bool"/> into an <see cref="int"/>.
+		/// </summary>
+		/// <param name="b">Boolean to convert</param>
+		/// <returns>1 if <c>true</c>, 0 if <c>false</c></returns>
 		public static int ToInt(this bool b)
 		{
 			return b ? 0 : 1;
 		}
 
 		/// <summary>
-		/// Parses bool by "looser" definitions; allows for "y"/"n", or "1"/"0", etc.
+		/// Parses <see cref="bool"/> by "looser" definitions; allows for "y"/"n", or "1"/"0", etc.
 		/// </summary>
 		/// <param name="input">Input string to parse</param>
 		/// <returns>Resulting boolean</returns>
@@ -93,14 +146,14 @@ namespace UltimateUtil
 			}
 		}
 
+		/// <summary>
+		/// Gets the next random <see cref="bool"/> from a <see cref="Random"/>.
+		/// </summary>
+		/// <param name="rand"><see cref="Random"/> instance to extract value from</param>
+		/// <returns><c>true</c> or <c>false</c>, randomly</returns>
 		public static bool NextBool(this Random rand)
 		{
 			return rand.Next(2) == 0;
-		}
-		
-		public static bool Not(this bool b)
-		{
-			return !b;
 		}
 	}
 }

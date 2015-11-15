@@ -6,9 +6,22 @@ using System.Threading.Tasks;
 
 namespace UltimateUtil
 {
+	/// <summary>
+	/// Various utilities involving classes and interfaces that extend <see cref="IEnumerable"/>
+	/// </summary>
 	public static class CollectionUtil
 	{
-		public static string ToReadableString<T>(this IEnumerable<T> collection)
+		/// <summary>
+		/// Creates a more readable string for collections, showing the contents of the
+		/// collection rather than the count. Do not use for large collections.
+		/// </summary>
+		/// <typeparam name="T">Collection type</typeparam>
+		/// <param name="collection">Collection to be expanded</param>
+		/// <param name="separator">String to separate items</param>
+		/// <param name="includeBraces">Whether to include braces on each before and after the contents</param>
+		/// <returns>A string showing the items within <paramref name="collection"/></returns>
+		public static string ToReadableString<T>(this IEnumerable<T> collection, 
+			string separator = ", ", bool includeBraces = true)
 		{
 			List<string> elements = new List<string>();
 			foreach (T t in collection)
@@ -16,14 +29,58 @@ namespace UltimateUtil
 				elements.Add(t.ToString());
 			}
 
-			return "{ " + string.Join(", ", elements) + " }";
+			string res = string.Join(separator, elements);
+
+			if (includeBraces)
+			{
+				res = "{ " + res + " }";
+			}
+
+			return res;
 		}
 
+		/// <summary>
+		/// Whether the collection is empty, without needing <c>Count() == 0</c>
+		/// </summary>
+		/// <typeparam name="T">Collection type</typeparam>
+		/// <param name="collection">Collection to check</param>
+		/// <returns><c>true</c> if the collection has zero items, <c>false</c> if not</returns>
 		public static bool IsEmpty<T>(this IEnumerable<T> collection)
 		{
 			return collection.Count() == 0;
 		}
 
+		/// <summary>
+		/// Whether the collection is <c>null</c> or empty.
+		/// </summary>
+		/// <typeparam name="T">Collection type</typeparam>
+		/// <param name="collection">Collection to check</param>
+		/// <returns><c>true</c> the collection is <c>null</c> or has zero items, <c>false</c> if not</returns>
+		public static bool IsNullOrEmpty<T>(this IEnumerable<T> collection)
+		{
+			return collection == null || collection.IsEmpty();
+		}
+
+		/// <summary>
+		/// Adds a collection of items to an <see cref="IList{T}"/>, rather than
+		/// an implementation of it.
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to add to</param>
+		/// <param name="added">Collection of items to add</param>
+		public static void AddRange<T>(this IList<T> list, IEnumerable<T> added)
+		{
+			foreach (T t in added)
+			{
+				list.Add(t);
+			}
+		}
+		/// <summary>
+		/// Adds various items to a list through <c>params</c>, for convenience.
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to add to</param>
+		/// <param name="added">Array of items to add</param>
 		public static void AddRange<T>(this IList<T> list, params T[] added)
 		{
 			foreach (T t in added)
@@ -32,6 +89,18 @@ namespace UltimateUtil
 			}
 		}
 
+		/// <summary>
+		/// Inserts an item at a given location if the item is not already present
+		/// in the list.
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to insert into</param>
+		/// <param name="index">Index to insert the item if it is not found</param>
+		/// <param name="item">Item to insert</param>
+		/// <returns>
+		/// <c>true</c> if insertion was successful, <c>false</c> if the item was already 
+		/// found within the list
+		/// </returns>
 		public static bool InsertIfMissing<T>(this IList<T> list, int index, T item)
 		{
 			if (list.Contains(item))
@@ -43,6 +112,16 @@ namespace UltimateUtil
 			return true;
 		}
 
+		/// <summary>
+		/// Adds an item to the list if the item is not already present within it.
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to add to</param>
+		/// <param name="item">Item to add</param>
+		/// <returns>
+		/// <c>true</c> adding was successful, <c>false</c> if the item was already found 
+		/// within the list
+		/// </returns>
 		public static bool AddIfMissing<T>(this IList<T> list, T item)
 		{
 			if (list.Contains(item))
@@ -54,6 +133,13 @@ namespace UltimateUtil
 			return true;
 		}
 
+		/// <summary>
+		/// Returns the index of the first item to match the given predicate
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to check</param>
+		/// <param name="predicate">Predicate for determining a match</param>
+		/// <returns>The index of the first match, or <c>-1</c> if none was found</returns>
 		public static int IndexOf<T>(this IList<T> list, Predicate<T> predicate)
 		{
 			for (int i = 0; i < list.Count; i++)
@@ -66,43 +152,125 @@ namespace UltimateUtil
 
 			return -1;
 		}
+		/// <summary>
+		/// Returns the index of the last item to match the given predicate
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to check</param>
+		/// <param name="predicate">Predicate for determining a match</param>
+		/// <returns>The index of the last match, or <c>-1</c> if none was found</returns>
+		public static int LastIndexOf<T>(this IList<T> list, Predicate<T> predicate)
+		{
+			for (int i = list.Count - 1; i >= 0; i--)
+			{
+				if (predicate(list[i]))
+				{
+					return i;
+				}
+			}
 
+			return -1;
+		}
+
+		/// <summary>
+		/// Randomly selects an item in a list
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to check</param>
+		/// <param name="random">Random to use</param>
+		/// <returns>A random item from within <paramref name="list"/></returns>
 		public static T SelectRandom<T>(this IList<T> list, Random random)
 		{
 			return list[random.Next(list.Count)];
 		}
+		/// <summary>
+		/// Randomly selects an item in an array
+		/// </summary>
+		/// <typeparam name="T">Array type</typeparam>
+		/// <param name="array">Array to check</param>
+		/// <param name="random">Random to use</param>
+		/// <returns>A random item from within <paramref name="array"/></returns>
 		public static T SelectRandom<T>(this T[] array, Random random)
 		{
 			return array[random.Next(array.Length)];
 		}
 
+		/// <summary>
+		/// Randomly selects an item in a list, from a given seed
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to check</param>
+		/// <param name="seed">Seed to initialize <see cref="Random"/> with</param>
+		/// <returns>A random item from within <paramref name="list"/></returns>
 		public static T SelectRandom<T>(this IList<T> list, int seed)
 		{
 			return list.SelectRandom(new Random(seed));
 		}
+		/// <summary>
+		/// Randomly selects an item in an array, from a given seed
+		/// </summary>
+		/// <typeparam name="T">Array type</typeparam>
+		/// <param name="array">Array to check</param>
+		/// <param name="seed">Seed to initialize <see cref="Random"/> with</param>
+		/// <returns>A random item from within <paramref name="array"/></returns>
 		public static T SelectRandom<T>(this T[] array, int seed)
 		{
 			return array.SelectRandom(new Random(seed));
 		}
 
+		/// <summary>
+		/// Randomly selects an item in a list, with the default seed
+		/// </summary>
+		/// <typeparam name="T">List type</typeparam>
+		/// <param name="list">List to check</param>
+		/// <returns>A random item from within <paramref name="list"/></returns>
 		public static T SelectRandom<T>(this IList<T> list)
 		{
 			return list.SelectRandom(new Random());
 		}
+		/// <summary>
+		/// Randomly selects an item in an array, with the default seed
+		/// </summary>
+		/// <typeparam name="T">Array type</typeparam>
+		/// <param name="array">Array to check</param>
+		/// <returns>A random item from within <paramref name="array"/></returns>
 		public static T SelectRandom<T>(this T[] array)
 		{
 			return array.SelectRandom(new Random());
 		}
 
-		public static T OneOf<T>(this Random rand, params T[] options)
+		/// <summary>
+		/// Randomly selects an item from one of the given options
+		/// </summary>
+		/// <typeparam name="T">Type of options</typeparam>
+		/// <param name="rand">Random to generate from</param>
+		/// <param name="options">Options from which to select</param>
+		/// <returns>One of the items from <paramref name="options"/></returns>
+		public static T NextItem<T>(this Random rand, params T[] options)
 		{
 			return options.SelectRandom(rand);
 		}
-		public static T OneOf<T>(this Random rand, IList<T> options)
+		/// <summary>
+		/// Randomly selects an item from a list of options
+		/// </summary>
+		/// <typeparam name="T">Type of options</typeparam>
+		/// <param name="rand">Random to generate from</param>
+		/// <param name="options">Options from which to select</param>
+		/// <returns>One of the items from <paramref name="options"/></returns>
+		public static T NextItem<T>(this Random rand, IList<T> options)
 		{
 			return options.SelectRandom(rand);
 		}
 
+		/// <summary>
+		/// Sets a key to a value on the dictionary, or adds a value to it under the specified key
+		/// if none exists
+		/// </summary>
+		/// <typeparam name="TKey">Key type in dictionary</typeparam>
+		/// <typeparam name="TValue">Value type in dictionary</typeparam>
+		/// <param name="dictionary">Dictionary in which to set the value</param>
+		/// <param name="key">Key of entry to set</param>
+		/// <param name="value">Value to set</param>
 		public static void Put<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
 		{
 			if (dictionary.ContainsKey(key))
@@ -115,6 +283,17 @@ namespace UltimateUtil
 			}
 		}
 
+		/// <summary>
+		/// Gets a value from a dictionary, or the default value if no key is found
+		/// </summary>
+		/// <typeparam name="TKey">Key type in dictionary</typeparam>
+		/// <typeparam name="TValue">Value type in dictionary</typeparam>
+		/// <param name="dictionary">Dictionary to get from</param>
+		/// <param name="key">Key of entry to get</param>
+		/// <returns>
+		/// The value of whatever is registered under <paramref name="key"/>, or 
+		/// <c>default(TValue)</c> if no such key is found
+		/// </returns>
 		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
 		{
 			if (dictionary.ContainsKey(key))
@@ -124,7 +303,46 @@ namespace UltimateUtil
 
 			return default(TValue);
 		}
+		/// <summary>
+		/// Gets a the first value from a dictionary to match the given predicate, or
+		/// the default value if none matches.
+		/// </summary>
+		/// <typeparam name="TKey">Key type in dictionary</typeparam>
+		/// <typeparam name="TValue">Value type in dictionary</typeparam>
+		/// <param name="dictionary">Dictionary to search</param>
+		/// <param name="predicate">Predicate to match by</param>
+		/// <returns>
+		/// The first value within <paramref name="dictionary"/> to match <paramref name="predicate"/>,
+		/// or <c>default(TValue)</c> if no pair matches
+		/// </returns>
+		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, 
+			Func<TKey, TValue, bool> predicate)
+		{
+			TValue res = default(TValue);
+			dictionary.ForEach((k, v) =>
+			{
+				if (predicate(k, v))
+				{
+					res = v;
+					return true;
+				}
 
+				return false;
+			});
+
+			return res;
+		}
+
+		/// <summary>
+		/// Gets a value from a dictionary, regardless of key case
+		/// </summary>
+		/// <typeparam name="T">Value type in dictionary</typeparam>
+		/// <param name="dictionary">Dictionary to get from</param>
+		/// <param name="caseInsensitiveKey">Key of entry to get</param>
+		/// <returns>
+		/// The value of the first entry to match <paramref name="caseInsensitiveKey"/>, or
+		/// <c>default(T)</c> if no matching key is found
+		/// </returns>
 		public static T GetIgnoreCase<T>(this IDictionary<string, T> dictionary, string caseInsensitiveKey)
 		{
 			if (caseInsensitiveKey.IsNullOrEmpty())
@@ -138,11 +356,25 @@ namespace UltimateUtil
 				if (k.Equals(caseInsensitiveKey, StringComparison.InvariantCultureIgnoreCase))
 				{
 					res = v;
+					return true;
 				}
+
+				return false;
 			});
 
 			return res;
 		}
+
+		/// <summary>
+		/// Returns whether a given key exists within the dictionary, regardless of case
+		/// </summary>
+		/// <typeparam name="TValue">Value type in dictionary</typeparam>
+		/// <param name="dict">Dictionary to check</param>
+		/// <param name="key">Key of entry to check</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="key"/> exists within <paramref name="dict"/>,
+		/// <c>false</c> if not
+		/// </returns>
 		public static bool ContainsKeyIgnoreCase<TValue>(this IDictionary<string, TValue> dict, string key)
 		{
 			foreach (string k in dict.Keys)
@@ -155,6 +387,16 @@ namespace UltimateUtil
 
 			return false;
 		}
+		/// <summary>
+		/// Returns whether a given value exists within the dictionary, regardless of case
+		/// </summary>
+		/// <typeparam name="TKey">Key type in dictionary</typeparam>
+		/// <param name="dict">Dictionary to check</param>
+		/// <param name="value">Value of entry to check</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="value"/> exists within <paramref name="dict"/>,
+		/// <c>false</c> if not
+		/// </returns>
 		public static bool ContainsValueIgnoreCase<TKey>(this IDictionary<TKey, string> dict, string value)
 		{
 			foreach (string v in dict.Values)
@@ -168,17 +410,16 @@ namespace UltimateUtil
 			return false;
 		}
 
-		public static bool IsAnyOf<TValue>(this TValue tested, params TValue[] possibleValues)
-		{
-			if (possibleValues == null)
-			{
-				throw new ArgumentNullException(nameof(possibleValues));
-			}
-
-			return possibleValues.Contains(tested);
-		}
-
-		public static string ToDelimitedString<T>(this IEnumerable<T> ien, Func<T, string> toString, string separator)
+		/// <summary>
+		/// Creates a string based on combining the results of a conversion function applied
+		/// to a collection. Essentially, converts a collection to strings and joins them together.
+		/// </summary>
+		/// <typeparam name="T">Collection type</typeparam>
+		/// <param name="ien">Collection to convert</param>
+		/// <param name="toString">Converter function</param>
+		/// <param name="separator">Separator string inserted between items</param>
+		/// <returns>A combined string from all the results of <paramref name="toString"/></returns>
+		public static string ToDelimitedString<T>(this IEnumerable<T> ien, Func<T, string> toString, string separator = ", ")
 		{
 			List<string> converted = new List<string>();
 			foreach (T t in ien)
@@ -189,6 +430,14 @@ namespace UltimateUtil
 			return string.Join(separator, converted);
 		}
 
+		/// <summary>
+		/// Converts a collection to another collection from a converter function
+		/// </summary>
+		/// <typeparam name="TInput">Type of input collection</typeparam>
+		/// <typeparam name="TResult">Type of output collection</typeparam>
+		/// <param name="input">Input collection</param>
+		/// <param name="converter">Function converting from <typeparamref name="TInput"/> to <typeparamref name="TResult"/></param>
+		/// <returns>A new collection from converting all members of <paramref name="input"/></returns>
 		public static IEnumerable<TResult> ConvertAll<TInput, TResult>(this IEnumerable<TInput> input, Func<TInput, TResult> converter)
 		{
 			foreach (TInput i in input)
@@ -219,14 +468,18 @@ namespace UltimateUtil
 			return dictionary;
 		}
 
+		/// <summary>
+		/// Returns an empty collection if it is null
+		/// </summary>
+		/// <typeparam name="T">Type of collection</typeparam>
+		/// <param name="input">Collection to check</param>
+		/// <returns>
+		/// An empty collection if <paramref name="input"/> is <c>null</c>, or
+		/// <paramref name="input"/> itself if not
+		/// </returns>
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> input)
 		{
 			return input ?? Enumerable.Empty<T>();
-		}
-
-		public static List<T> List<T>(params T[] items)
-		{
-			return new List<T>(items);
 		}
 	}
 }
