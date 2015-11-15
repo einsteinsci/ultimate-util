@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace UltimateUtil.UserInteraction
 {
+	/// <summary>
+	/// Type of interaction for <see cref="VersatileIO"/>. Mostly useless.
+	/// </summary>
 	public enum InteractionType
 	{
 		LogPart,
@@ -53,7 +56,8 @@ namespace UltimateUtil.UserInteraction
 	public delegate string GetSelection(string prompt, IDictionary<string, object> options);
 
 	/// <summary>
-	/// Contains methods for interacting with the user dynamically and simply.
+	/// Contains methods for interacting with the user dynamically and simply, while remaining open
+	/// to the programmer. Designed to be used by class libraries.
 	/// </summary>
 	public static class VersatileIO
 	{
@@ -170,105 +174,14 @@ namespace UltimateUtil.UserInteraction
 
 			return d.Value;
 		}
-
-		/*
+		
 		/// <summary>
-		/// Attempts to retrieve an <c>object</c> from a list.
+		/// Retrieves an item from the selection process stored in <see cref="OnGetSelection"/>.
 		/// </summary>
-		/// <param name="options"><see cref="IList{object}"/> of options that the user can select.</param>
-		/// <param name="ignorable">
-		/// <c>true</c> if the user can choose to ignore the options, returning <c>null</c>,
-		/// <c>false</c> if not.
-		/// </param>
-		/// <returns>Resulting entry from the list, <c>null</c> if ignored.</returns>
-		public static object GetSelection(string prompt, IList<object> options, bool ignorable = false)
-		{
-			if (ignorable)
-			{
-				if (OnGetIgnorableSelection != null)
-				{
-					return OnGetIgnorableSelection(prompt, options);
-				}
-
-				return null;
-			}
-			else
-			{
-				if (OnGetSelection != null)
-				{
-					return OnGetSelection(prompt, options);
-				}
-
-				return null;
-			}
-		}
-		/// <summary>
-		/// Attempts to retrieve an item from a list of <c>class</c> objects.
-		/// </summary>
-		/// <typeparam name="T">Type of item provided.</typeparam>
-		/// <param name="options"><see cref="IList{T}"/> of options the user can select.</param>
-		/// <param name="ignorable">
-		/// <c>true</c> if the user can choose to ignore the options, returning <c>null</c>,
-		/// <c>false</c> if not.
-		/// </param>
-		/// <returns>Resulting entry from the list, <c>null</c> if ignored.</returns>
-		public static T GetSelection<T>(string prompt, IList<T> options, bool ignorable = false) where T : class
-		{
-			IList<object> objForm = new List<object>();
-			foreach (T t in options)
-			{
-				objForm.Add(t);
-			}
-
-			return (T)GetSelection(prompt, objForm, ignorable);
-		}
-		/// <summary>
-		/// Retrieves an item from a list of <c>struct</c> objects.
-		/// </summary>
-		/// <typeparam name="T">Type of item provided.</typeparam>
-		/// <param name="options"><see cref="IList{T}"/> of options the user can select.</param>
-		/// <returns>Resulting entry from the list, <c>null</c> if ignored.</returns>
-		public static T GetSelection<T>(string prompt, IList<T> options) where T : struct
-		{
-			IList<object> objForm = new List<object>();
-			foreach (T t in options)
-			{
-				objForm.Add(t);
-			}
-
-			return (T)GetSelection(prompt, objForm, false);
-		}
-		/// <summary>
-		/// Attempts to retrieve an item from a list of <c>struct</c> objects.
-		/// </summary>
-		/// <typeparam name="T">Type of item provided.</typeparam>
-		/// <param name="options"><see cref="IList{T}"/> of options the user can select.</param>
-		/// <param name="ignorable">
-		/// <c>true</c> if the user can choose to ignore the options, returning <c>null</c>,
-		/// <c>false</c> if not.
-		/// </param>
-		/// <returns>Resulting entry from the list, <c>null</c> if ignored.</returns>
-		public static T? GetSelectionIgnorable<T>(string prompt, IList<T> options) where T : struct
-		{
-			IList<object> objForm = new List<object>();
-			foreach (T t in options)
-			{
-				objForm.Add(t);
-			}
-
-			object res = GetSelection(prompt, objForm, true);
-
-			if (res == null)
-			{
-				return null;
-			}
-			else
-			{
-				return (T)res;
-			}
-		}
-		*/
-
+		/// <param name="prompt">Text to display as a prompt</param>
+		/// <param name="options">Available options to display the user.</param>
+		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
+		/// <returns>The key of the selected item in <paramref name="options"/></returns>
 		public static string GetSelection(string prompt, IDictionary<string, object> options, bool ignorable = false)
 		{
 			if (!ignorable)
@@ -291,6 +204,13 @@ namespace UltimateUtil.UserInteraction
 			}
 		}
 
+		/// <summary>
+		/// Retrieves an item from the selection process stored in <see cref="OnGetSelection"/>.
+		/// </summary>
+		/// <param name="prompt">Text to display as a prompt</param>
+		/// <param name="options">Available options to display the user.</param>
+		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
+		/// <returns>The index of the selected item in <paramref name="options"/>, or <c>-1</c> if ignored by user</returns>
 		public static int GetSelection(string prompt, IList<object> options, bool ignorable = false)
 		{
 			IDictionary<string, object> dict = new Dictionary<string, object>();
@@ -300,14 +220,34 @@ namespace UltimateUtil.UserInteraction
 			}
 
 			string key = GetSelection(prompt, dict, ignorable);
+			if (key == null)
+			{
+				return -1;
+			}
+
 			return int.Parse(key);
 		}
 
+		/// <summary>
+		/// Retrieves an item from the selection process stored in <see cref="OnGetSelection"/>.
+		/// </summary>
+		/// <param name="prompt">Text to display as a prompt</param>
+		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
+		/// <param name="args">Available options to display the user, alternating between key and value.</param>
+		/// <returns>The key of the selected item in <paramref name="options"/>, or <c>null</c> if ignored by user.</returns>
 		public static string GetSelection(string prompt, bool ignorable, params object[] args)
 		{
 			return GetSelection(prompt, ignorable, new List<object>(), args);
 		}
 
+		/// <summary>
+		/// Retrieves an item from the selection process stored in <see cref="OnGetSelection"/>.
+		/// </summary>
+		/// <param name="prompt">Text to display as a prompt</param>
+		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
+		/// <param name="options">Available options to display the user, listed by number.</param>
+		/// <param name="args">Additional options to display, alternating between key and value.</param>
+		/// <returns>The key of the selected item, or <c>null</c> if ignored by user</returns>
 		public static string GetSelection(string prompt, bool ignorable, IList<object> options, params object[] args)
 		{
 			IDictionary<string, object> dict = new Dictionary<string, object>();

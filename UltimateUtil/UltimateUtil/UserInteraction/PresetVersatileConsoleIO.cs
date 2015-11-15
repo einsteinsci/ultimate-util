@@ -6,14 +6,34 @@ using System.Threading.Tasks;
 
 namespace UltimateUtil.UserInteraction
 {
+	/// <summary>
+	/// Provides an example implementation of <see cref="VersatileIO"/> delegates
+	/// for the <see cref="Console"/>.
+	/// </summary>
 	public static class PresetVersatileConsoleIO
 	{
+		/// <summary>
+		/// Color to use in user prompts
+		/// </summary>
 		public static ConsoleColor PromptColor
 		{ get; set; }
 
+		/// <summary>
+		/// Whether to continue asking if the user enters invalid input. If set to
+		/// <c>false</c>, the method will default to <see cref="double.NaN"/> or <c>null</c>.
+		/// </summary>
 		public static bool BePersistent
 		{ get; set; }
 
+		/// <summary>
+		/// Initializes <see cref="VersatileIO"/> to the console presets in this class.
+		/// </summary>
+		/// <param name="promptColor">Color to use in user prompts</param>
+		/// <param name="bePersistent">
+		/// Whether to continue asking if the user enters invalid input. If set to <c>false</c>, 
+		/// the method will default to <see cref="double.NaN"/> or <c>null</c>.
+		/// </param>
+		/// <param name="initializedMessage">Whether to log an initialization message.</param>
 		public static void Initialize(ConsoleColor promptColor = ConsoleColor.White, 
 			bool bePersistent = true, bool initializedMessage = true)
 		{
@@ -27,9 +47,17 @@ namespace UltimateUtil.UserInteraction
 			VersatileIO.OnGetSelection = GetSelection;
 			VersatileIO.OnGetIgnorableSelection = GetSelectionIgnorable;
 
-			VersatileIO.WriteLine("Logger initialized", ConsoleColor.Gray);
+			if (initializedMessage)
+			{
+				VersatileIO.WriteLine("Logger initialized", ConsoleColor.Gray);
+			}
 		}
 
+		/// <summary>
+		/// Method supplied to the <see cref="VersatileIO.OnLogPart"/> event.
+		/// </summary>
+		/// <param name="text">Text to log</param>
+		/// <param name="color">Color of text, <c>null</c> if not changed.</param>
 		public static void OnLogPart(string text, ConsoleColor? color)
 		{
 			if (color != null)
@@ -38,12 +66,22 @@ namespace UltimateUtil.UserInteraction
 			}
 			Console.Write(text);
 		}
+		/// <summary>
+		/// Method supplied to the <see cref="VersatileIO.OnLogLine"/> event.
+		/// </summary>
+		/// <param name="line">Text to log</param>
+		/// <param name="color">Color of text</param>
 		public static void OnLogLine(string line, ConsoleColor color)
 		{
 			Console.ForegroundColor = color;
 			Console.WriteLine(line);
 		}
 
+		/// <summary>
+		/// Method supplied to the <see cref="VersatileIO.OnGetString"/> delegate.
+		/// </summary>
+		/// <param name="prompt">Text to prompt the user for input</param>
+		/// <returns>The resulting <see cref="string"/>.</returns>
 		public static string GetString(string prompt)
 		{
 			Console.ForegroundColor = PromptColor;
@@ -51,6 +89,11 @@ namespace UltimateUtil.UserInteraction
 			return Console.ReadLine();
 		}
 
+		/// <summary>
+		/// Method supplied to the <see cref="VersatileIO.OnGetNumber"/> delegate.
+		/// </summary>
+		/// <param name="prompt">Text to prompt the user for input</param>
+		/// <returns>The resulting <see cref="double"/>.</returns>
 		public static double GetDouble(string prompt)
 		{
 			double d = double.NaN;
@@ -73,8 +116,8 @@ namespace UltimateUtil.UserInteraction
 
 					if (!BePersistent)
 					{
-						Console.WriteLine("Defaulting to 0.");
-						d = 0;
+						Console.WriteLine("Defaulting to NaN.");
+						d = double.NaN;
 						worked = true;
 					}
 				}
@@ -83,6 +126,12 @@ namespace UltimateUtil.UserInteraction
 			return d;
 		}
 
+		/// <summary>
+		/// Method supplied to the <see cref="VersatileIO.OnGetSelection"/> delegate.
+		/// </summary>
+		/// <param name="prompt">Dictionary of options and their respective keys</param>
+		/// <param name="options">Text given as a prompt after selections are listed.</param>
+		/// <returns>The key of the resulting item.</returns>
 		public static string GetSelection(string prompt, IDictionary<string, object> options)
 		{
 			foreach (KeyValuePair<string, object> kvp in options)
@@ -115,6 +164,12 @@ namespace UltimateUtil.UserInteraction
 			}
 		}
 
+		/// <summary>
+		/// Method supplied to the <see cref="VersatileIO.OnGetIgnorableSelection"/> delegate.
+		/// </summary>
+		/// <param name="prompt">Dictionary of options and their respective keys</param>
+		/// <param name="options">Text given as a prompt after selections are listed.</param>
+		/// <returns>The key of the resulting item.</returns>
 		public static string GetSelectionIgnorable(string prompt, IDictionary<string, object> options)
 		{
 			foreach (KeyValuePair<string, object> kvp in options)
