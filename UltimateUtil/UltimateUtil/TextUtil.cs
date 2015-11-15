@@ -109,8 +109,8 @@ namespace UltimateUtil
 		/// Thrown if a format piece does not contain a valid integer.
 		/// </exception>
 		/// <example>
-		/// <code>"partOne:partTwo=partThree".FormatSplit("{0}:{1}={2}")</code>
-		/// Returns <code>{ "partOne", "partTwo", "partThree" }</code>
+		/// <c>"partOne:partTwo=partThree".FormatSplit("{0}:{1}={2}")</c>
+		/// Returns <c>new string[] { "partOne", "partTwo", "partThree" }</c>
 		/// </example>
 		public static string[] FormatSplit(this string input, string format, char temporary = '\n')
 		{
@@ -189,28 +189,89 @@ namespace UltimateUtil
 			return string.Format(formatted, formatArgs);
 		}
 
+		/// <summary>
+		/// Compares two strings, ignoring case.
+		/// </summary>
+		/// <param name="str">First string</param>
+		/// <param name="other">Second string</param>
+		/// <returns>Whether the two strings are equal, ignoring case</returns>
 		public static bool EqualsIgnoreCase(this string str, string other)
 		{
 			return str.Equals(other, StringComparison.OrdinalIgnoreCase);
 		}
+		/// <summary>
+		/// Tests whether a string starts with another string, ignoring case
+		/// </summary>
+		/// <param name="str">String to search</param>
+		/// <param name="other">String to test for</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="str"/> starts with <paramref name="other"/>,
+		/// <c>false</c> if not, ignoring case
+		/// </returns>
 		public static bool StartsWithIgnoreCase(this string str, string other)
 		{
 			return str.StartsWith(other, StringComparison.OrdinalIgnoreCase);
 		}
+		/// <summary>
+		/// Tests whether a string ends with another string, ignoring case
+		/// </summary>
+		/// <param name="str">String to search</param>
+		/// <param name="other">String to test for</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="str"/> ends with <paramref name="other"/>,
+		/// <c>false</c> if not, ignoring case
+		/// </returns>
 		public static bool EndsWithIgnoreCase(this string str, string other)
 		{
 			return str.EndsWith(other, StringComparison.OrdinalIgnoreCase);
 		}
+		/// <summary>
+		/// Tests whether a string contains another string, ignoring case
+		/// </summary>
+		/// <param name="str">String to search</param>
+		/// <param name="other">String to test for</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="str"/> contains <paramref name="other"/>,
+		/// <c>false</c> if not, ignoring case
+		/// </returns>
 		public static bool ContainsIgnoreCase(this string str, string other)
 		{
 			return str.ToLower().Contains(other.ToLower());
 		}
 
+		/// <summary>
+		/// Tests whether a string is <c>null</c> or empty, an extension method
+		/// version of <see cref="string.IsNullOrEmpty(string)"/>
+		/// </summary>
+		/// <param name="str">String to check</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="str"/> is <c>null</c> or 
+		/// <see cref="string.Empty"/>, <c>false</c> if not
+		/// </returns>
 		public static bool IsNullOrEmpty(this string str)
 		{
 			return string.IsNullOrEmpty(str);
 		}
 
+		/// <summary>
+		/// Tests whether a string is <c>null</c>, empty, or whitespace, an extension method
+		/// version of <see cref="string.IsNullOrWhiteSpace(string)"/>
+		/// </summary>
+		/// <param name="str">String to check</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="str"/> is <c>null</c>, <see cref="string.Empty"/>, 
+		/// or all whitespace, <c>false</c> if not
+		/// </returns>
+		public static bool IsNullOrWhitespace(this string str)
+		{
+			return string.IsNullOrWhiteSpace(str);
+		}
+
+		/// <summary>
+		/// Reverses a string to go back-to-front
+		/// </summary>
+		/// <param name="str">String to reverse</param>
+		/// <returns><paramref name="str"/>, only backwards</returns>
 		public static string Reverse(this string str)
 		{
 			char[] array = str.ToCharArray();
@@ -218,14 +279,42 @@ namespace UltimateUtil
 			return new string(array);
 		}
 
-		public static void ThrowIfNullOrEmpty(this string str, string varname)
+		/// <summary>
+		/// Throws an exception if the string is <c>null</c> or empty
+		/// </summary>
+		/// <param name="str">String to test</param>
+		/// <param name="varname">
+		/// Variable name to supply the exception. <c>null</c> calls the default constructor
+		/// </param>
+		/// <exception cref="ArgumentNullException">
+		/// Thrown if <paramref name="str"/> is <c>null</c> or empty
+		/// </exception>
+		public static void ThrowIfNullOrEmpty(this string str, string varname = null)
 		{
 			if (str.IsNullOrEmpty())
 			{
-				throw new ArgumentNullException(varname);
+				if (varname == null)
+				{
+					throw new ArgumentNullException();
+				}
+				else
+				{
+					throw new ArgumentNullException(varname);
+				}
 			}
 		}
 
+		/// <summary>
+		/// Shortens a string to a maximum length, adding a "continued" suffix to indicate it
+		/// has been shortened
+		/// </summary>
+		/// <param name="str">String to shorten</param>
+		/// <param name="maxLength">Maximum characters in string before shortening</param>
+		/// <param name="suffix">Suffix to append to the string if shortened.</param>
+		/// <returns>
+		/// <paramref name="str"/> shortened to <paramref name="maxLength"/> characters, 
+		/// with <paramref name="suffix"/> appended if <paramref name="str"/> was shortened
+		/// </returns>
 		public static string Shorten(this string str, int maxLength, string suffix = "...")
 		{
 			if (str.IsNullOrEmpty() || str.Length <= maxLength)

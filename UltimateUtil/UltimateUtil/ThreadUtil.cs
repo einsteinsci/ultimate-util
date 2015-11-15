@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace UltimateUtil
 {
+	/// <summary>
+	/// [WIP] Various utilities involving threading.
+	/// </summary>
 	public static class ThreadUtil
 	{
 		/// <summary>
