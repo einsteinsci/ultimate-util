@@ -13,6 +13,9 @@ namespace UltimateUtil
 	public sealed class Box<T>
 		where T : struct
 	{
+		/// <summary>
+		/// Value stored in the box
+		/// </summary>
 		public T Value
 		{ get; set; }
 
