@@ -67,25 +67,25 @@ namespace UltimateUtil
 		/// </summary>
 		/// <param name="value">Value to multiply</param>
 		/// <returns><c><paramref name="value"/> * 1024</c></returns>
-		public static int K(this int value)
+		public static long K(this long value)
 		{
-			return value * 1024;
+			return value * 1024L;
 		}
 		/// <summary>
 		/// Returns a value x1,048,576 (1024^2)
 		/// </summary>
 		/// <param name="value">Value to multiply</param>
 		/// <returns><c><paramref name="value"/> * 1048576</c></returns>
-		public static int M(this int value)
+		public static long M(this long value)
 		{
-			return value.K() * 1024;
+			return value.K() * 1024L;
 		}
 		/// <summary>
 		/// Returns a value x1,073,741,824 (1024^3)
 		/// </summary>
 		/// <param name="value">Value to multiply</param>
 		/// <returns><c><paramref name="value"/> * 1073741824</c></returns>
-		public static long G(this int value)
+		public static long G(this long value)
 		{
 			return value.M() * 1024L;
 		}

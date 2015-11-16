@@ -52,6 +52,7 @@
     <Compile Include="EnumUtils_Test.cs" />
     <Compile Include="FluidUtil_Test.cs" />
     <Compile Include="Logger_Test.cs" />
+    <Compile Include="NumberUtils_Test.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registries_Test.cs" />
