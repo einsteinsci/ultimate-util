@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -121,6 +122,112 @@ namespace UltimateUtil.UserInteraction
 		}
 
 		/// <summary>
+		/// Writes a line of text with formatting codes for color, patterned after Minecraft chat
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="escape">Escape character that formatting codes are prefixed with</param>
+		/// <example>
+		/// <c>WriteComplex("\cRED \9BLUE \aGREEN");</c> prints "RED " in red text, followed by
+		/// "BLUE " in blue text, followed by "GREEN" in green text.
+		/// </example>
+		public static void WriteComplex(string text, char escape = '\\')
+		{
+			List<string> parts = new List<string>();
+			string currentPart = "";
+			bool nextCode = false;
+			ConsoleColor? currentColor = null;
+			foreach (char c in text)
+			{
+				if (c == escape)
+				{
+					nextCode = true;
+					continue;
+				}
+
+				if (nextCode)
+				{
+					if (!currentPart.IsNullOrEmpty())
+					{
+						Write(currentPart, currentColor);
+					}
+
+					bool failedCode = false;
+					currentPart = "";
+					try
+					{
+						byte colorNum = Convert.ToByte(c.ToString(), 16);
+						currentColor = (ConsoleColor)colorNum;
+					}
+					catch (FormatException)
+					{
+						failedCode = true;
+					}
+					catch (ArgumentException)
+					{
+						failedCode = true;
+					}
+					nextCode = false;
+
+					if (failedCode)
+					{
+						currentPart += escape.ToString() + c.ToString();
+					}
+
+					continue;
+				}
+
+				currentPart += c;
+			}
+
+			if (!currentPart.IsNullOrEmpty())
+			{
+				Write(currentPart, currentColor);
+			}
+		}
+
+		/// <summary>
+		/// Writes a line of colored text similar to <see cref="string.Format(string, object[])"/>
+		/// by replacing formatter parts (such as <c>{0}</c>) with codes for the given colors,
+		/// transforming the text from then onward to the specified color.
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="escape">
+		/// Escape character used internally. Do not use a character that appears in <paramref name="text"/>.
+		/// </param>
+		/// <param name="colors">Colors to format text into</param>
+		/// <example>
+		/// <c>WriteComplex("{0}RED {1}BLUE {2}GREEN", '\\', ConsoleColor.Red, ConsoleColor.Blue, ConsoleColor.Green);</c>
+		/// prints "RED " in red text, followed by "BLUE " in blue text, followed by "GREEN" in green text.
+		/// </example>
+		public static void WriteComplex(string text, char escape, params ConsoleColor[] colors)
+		{
+			List<string> formatters = new List<string>();
+			foreach (ConsoleColor col in colors)
+			{
+				byte b = (byte)col;
+				formatters.Add(escape.ToString() + b.ToString("X"));
+			}
+
+			string withFormatters = text.Fmt(formatters.ToArray());
+			WriteComplex(withFormatters, escape);
+		}
+		/// <summary>
+		/// Writes a line of colored text similar to <see cref="string.Format(string, object[])"/>
+		/// by replacing formatter parts (such as <c>{0}</c>) with codes for the given colors,
+		/// transforming the text from then onward to the specified color.
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="colors">Colors to format text into</param>
+		/// <example>
+		/// <c>WriteComplex("{0}RED {1}BLUE {2}GREEN", ConsoleColor.Red, ConsoleColor.Blue, ConsoleColor.Green);</c>
+		/// prints "RED " in red text, followed by "BLUE " in blue text, followed by "GREEN" in green text.
+		/// </example>
+		public static void WriteComplex(string text, params ConsoleColor[] colors)
+		{
+			WriteComplex(text, '\\', colors);
+		}
+
+		/// <summary>
 		/// Retrieves a string from the input method stored in <see cref="OnGetString"/>.
 		/// </summary>
 		/// <param name="prompt">Text to display as a prompt</param>
@@ -174,21 +281,35 @@ namespace UltimateUtil.UserInteraction
 
 			return d.Value;
 		}
+
+		private static IDictionary<string, object> _toObjForm<T>(IDictionary<string, T> dict)
+		{
+			IDictionary<string, object> res = new Dictionary<string, object>();
+			foreach (KeyValuePair<string, T> kvp in dict)
+			{
+				res.Add(kvp.Key, kvp.Value);
+			}
+
+			return res;
+		}
 		
 		/// <summary>
 		/// Retrieves an item from the selection process stored in <see cref="OnGetSelection"/>.
 		/// </summary>
+		/// <typeparam name="T">Value type of dictionary where options are stored</typeparam>
 		/// <param name="prompt">Text to display as a prompt</param>
 		/// <param name="options">Available options to display the user.</param>
 		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
 		/// <returns>The key of the selected item in <paramref name="options"/></returns>
-		public static string GetSelection(string prompt, IDictionary<string, object> options, bool ignorable = false)
+		public static string GetSelection<T>(string prompt, IDictionary<string, T> options, bool ignorable = false)
 		{
+			IDictionary<string, object> objDict = _toObjForm(options);
+
 			if (!ignorable)
 			{
 				if (OnGetSelection != null)
 				{
-					return OnGetSelection(prompt, options);
+					return OnGetSelection(prompt, objDict);
 				}
 
 				return null;
@@ -197,7 +318,7 @@ namespace UltimateUtil.UserInteraction
 			{
 				if (OnGetIgnorableSelection != null)
 				{
-					return OnGetIgnorableSelection(prompt, options);
+					return OnGetIgnorableSelection(prompt, objDict);
 				}
 
 				return null;
@@ -207,11 +328,12 @@ namespace UltimateUtil.UserInteraction
 		/// <summary>
 		/// Retrieves an item from the selection process stored in <see cref="OnGetSelection"/>.
 		/// </summary>
+		/// <typeparam name="T">Type within list</typeparam>
 		/// <param name="prompt">Text to display as a prompt</param>
 		/// <param name="options">Available options to display the user.</param>
 		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
 		/// <returns>The index of the selected item in <paramref name="options"/>, or <c>-1</c> if ignored by user</returns>
-		public static int GetSelection(string prompt, IList<object> options, bool ignorable = false)
+		public static int GetSelection<T>(string prompt, IList<T> options, bool ignorable = false)
 		{
 			IDictionary<string, object> dict = new Dictionary<string, object>();
 			for (int i = 0; i < options.Count; i++)
@@ -243,12 +365,13 @@ namespace UltimateUtil.UserInteraction
 		/// <summary>
 		/// Retrieves an item from the selection process stored in <see cref="OnGetSelection"/>.
 		/// </summary>
+		/// <typeparam name="T">Type within list</typeparam>
 		/// <param name="prompt">Text to display as a prompt</param>
 		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
 		/// <param name="options">Available options to display the user, listed by number.</param>
 		/// <param name="args">Additional options to display, alternating between key and value.</param>
 		/// <returns>The key of the selected item, or <c>null</c> if ignored by user</returns>
-		public static string GetSelection(string prompt, bool ignorable, IList<object> options, params object[] args)
+		public static string GetSelection<T>(string prompt, bool ignorable, IList<T> options, params object[] args)
 		{
 			IDictionary<string, object> dict = new Dictionary<string, object>();
 			for (int i = 0; i < options.Count; i++)

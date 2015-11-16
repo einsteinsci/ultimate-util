@@ -44,6 +44,8 @@ namespace UltimateUtil.Test
 
 			string contents = File.ReadAllText(filePath).Trim();
 			Assert.AreEqual("[INFO] hello world", contents);
+
+			File.Delete(filePath);
 		}
 
 		private Logger _setUpLogger()
