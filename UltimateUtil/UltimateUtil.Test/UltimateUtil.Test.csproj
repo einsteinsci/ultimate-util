@@ -58,6 +58,7 @@
     <Compile Include="ReflectionUtil_Test.cs" />
     <Compile Include="Registries_Test.cs" />
     <Compile Include="TextUtil_Test.cs" />
+    <Compile Include="ThreadUtil_Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
