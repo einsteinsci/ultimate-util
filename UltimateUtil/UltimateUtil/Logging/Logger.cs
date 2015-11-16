@@ -160,7 +160,8 @@ namespace UltimateUtil.Logging
 		/// <param name="doTimeStamps">Whether to include time stamps on log messages.</param>
 		/// <param name="minLogLevel">Minimum log level for event output.</param>
 		/// <param name="minFileLevel">Minimum log level for file output.</param>
-		public Logger(string fileOutput, bool doTimeStamps, LogLevel minLogLevel, LogLevel minFileLevel)
+		public Logger(string fileOutput = null, bool doTimeStamps = true, 
+			LogLevel minLogLevel = LogLevel.Info, LogLevel minFileLevel = LogLevel.Debug)
 		{
 			if (fileOutput != null)
 			{
