@@ -55,6 +55,7 @@
     <Compile Include="NumberUtils_Test.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectionUtil_Test.cs" />
     <Compile Include="Registries_Test.cs" />
     <Compile Include="TextUtil_Test.cs" />
   </ItemGroup>

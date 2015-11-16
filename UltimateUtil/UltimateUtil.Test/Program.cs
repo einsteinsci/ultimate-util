@@ -15,7 +15,8 @@ namespace UltimateUtil.Test
 		{
 			PresetVersatileConsoleIO.Initialize();
 
-			TestRandom();
+			ReflectionUtil_Test test = new ReflectionUtil_Test();
+			test.TypesInNamespace();
 
 			Console.ReadKey();
 		}

@@ -132,8 +132,10 @@ namespace UltimateUtil
 			return type.GetMembersWithAttribute(typeof(TAtt), filters);
 		}
 
+#if GENERIC_DELEGATE_FACTORY
 		/// <summary>
-		/// Creates a single-argument delegate value from a generic single-argument method
+		/// Creates a single-argument delegate value from a generic single-argument method.
+		/// Not entirely sure how it works, or how to use it.
 		/// </summary>
 		/// <typeparam name="T">Argument type of the method</typeparam>
 		/// <param name="target">Instance of object to create the delegate from</param>
@@ -146,7 +148,8 @@ namespace UltimateUtil
 			return del;
 		}
 		/// <summary>
-		/// Creates a single-argument delegate object from a generic single-argument method
+		/// Creates a single-argument delegate object from a generic single-argument method. Useful when
+		/// supplying functional types to generic methods. Not entirely sure how it works.
 		/// </summary>
 		/// <param name="genericType">Generic type to supply the method</param>
 		/// <param name="target">Object instance from which to create the method from. Use null for static methods.</param>
@@ -162,6 +165,7 @@ namespace UltimateUtil
 
 			return del;
 		}
+#endif
 
 		/// <summary>
 		/// Invokes an instance method by string name. Useful for reflected types.

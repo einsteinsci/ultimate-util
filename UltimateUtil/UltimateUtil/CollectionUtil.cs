@@ -493,5 +493,16 @@ namespace UltimateUtil
 		{
 			return input ?? Enumerable.Empty<T>();
 		}
+
+		/// <summary>
+		/// Creates an array with this as its only member
+		/// </summary>
+		/// <typeparam name="T">Type of array</typeparam>
+		/// <param name="obj">Object to put in. Must inherit from <typeparamref name="T"/></param>
+		/// <returns>An array with <paramref name="obj"/> as its only member</returns>
+		public static T[] Once<T>(this object obj)
+		{
+			return new T[] { (T)obj };
+		}
 	}
 }
