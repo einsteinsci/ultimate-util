@@ -19,7 +19,10 @@ namespace UltimateUtil
 		/// </summary>
 		/// <typeparam name="T">Enum in which to search</typeparam>
 		/// <param name="value">Value of enum</param>
-		/// <returns>The description applied to <see cref="value"/></returns>
+		/// <returns>
+		/// The description applied to <see cref="value"/>, or <c><paramref name="value"/>.ToString()</c>
+		/// if none is applied.
+		/// </returns>
 		public static string GetDescription<T>(this T value) where T : struct
 		{
 			Type t = typeof(T);
@@ -30,7 +33,13 @@ namespace UltimateUtil
 
 			FieldInfo field = t.GetField(value.ToString());
 
-			EnumDescriptionAttribute att = field.GetCustomAttribute<EnumDescriptionAttribute>();
+			EnumDescriptionAttribute att = null;
+			try
+			{
+				att = field.GetCustomAttribute<EnumDescriptionAttribute>();
+			}
+			catch (ArgumentNullException) // if enum value is out of range
+			{ }
 
 			if (att == null)
 			{
@@ -43,26 +52,13 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
-		/// Gets all members of an enum via reflection
+		/// Gets all members of an enum via <see cref="Enum.GetValues(Type)"/>
 		/// </summary>
 		/// <typeparam name="T">Enum to search</typeparam>
 		/// <returns>A <see cref="List{T}"/> of all members in <typeparamref name="T"/></returns>
 		public static List<T> GetAllValues<T>() where T : struct
 		{
-			Type t = typeof(T);
-			if (!t.InheritsFrom<Enum>())
-			{
-				throw new ArgumentException("Type " + t.ToString() + " is not an enum.");
-			}
-
-			FieldInfo[] fields = t.GetFields();
-			List<T> res = new List<T>();
-			foreach (FieldInfo f in fields)
-			{
-				res.Add((T)f.GetValue(null));
-			}
-
-			return res;
+			return Enum.GetValues(typeof(T)).Cast<T>().ToList();
 		}
 
 		/// <summary>
