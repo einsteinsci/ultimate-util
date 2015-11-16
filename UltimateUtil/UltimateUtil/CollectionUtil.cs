@@ -41,6 +41,37 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
+		/// Creates a string based on combining the results of a conversion function applied
+		/// to a collection. Essentially, converts a collection to strings and joins them together.
+		/// </summary>
+		/// <typeparam name="T">Collection type</typeparam>
+		/// <param name="ien">Collection to convert</param>
+		/// <param name="toString">Converter function</param>
+		/// <param name="separator">Separator string inserted between items</param>
+		/// <param name="includeBraces">
+		/// Whether to add braces before the first element and after the last, to match C# array literals
+		/// </param>
+		/// <returns>A combined string from all the results of <paramref name="toString"/></returns>
+		public static string ToReadableString<T>(this IEnumerable<T> ien, Func<T, string> toString,
+			string separator = ", ", bool includeBraces = true)
+		{
+			List<string> converted = new List<string>();
+			foreach (T t in ien)
+			{
+				converted.Add(toString(t));
+			}
+
+			string res = string.Join(separator, converted);
+
+			if (includeBraces)
+			{
+				res = "{ " + res + " }";
+			}
+
+			return res;
+		}
+
+		/// <summary>
 		/// Whether the collection is empty, without needing <c>Count() == 0</c>
 		/// </summary>
 		/// <typeparam name="T">Collection type</typeparam>
@@ -409,26 +440,6 @@ namespace UltimateUtil
 			}
 
 			return false;
-		}
-
-		/// <summary>
-		/// Creates a string based on combining the results of a conversion function applied
-		/// to a collection. Essentially, converts a collection to strings and joins them together.
-		/// </summary>
-		/// <typeparam name="T">Collection type</typeparam>
-		/// <param name="ien">Collection to convert</param>
-		/// <param name="toString">Converter function</param>
-		/// <param name="separator">Separator string inserted between items</param>
-		/// <returns>A combined string from all the results of <paramref name="toString"/></returns>
-		public static string ToDelimitedString<T>(this IEnumerable<T> ien, Func<T, string> toString, string separator = ", ")
-		{
-			List<string> converted = new List<string>();
-			foreach (T t in ien)
-			{
-				converted.Add(toString(t));
-			}
-
-			return string.Join(separator, converted);
 		}
 
 		/// <summary>

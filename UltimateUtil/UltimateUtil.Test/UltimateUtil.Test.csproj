@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooleanUtil_Test.cs" />
+    <Compile Include="CollectionUtil_Test.cs" />
     <Compile Include="FluidUtil_Test.cs" />
     <Compile Include="Logger_Test.cs" />
     <Compile Include="Program.cs" />
