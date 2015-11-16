@@ -15,9 +15,35 @@ namespace UltimateUtil.Test
 		{
 			PresetVersatileConsoleIO.Initialize();
 
-			TestVersatileIO();
+			TestRandom();
 
 			Console.ReadKey();
+		}
+
+		private static void TestRandom()
+		{
+			long time = DateTime.Now.Ticks;
+			Random rand = new Random();
+
+			int t = 0, f = 0;
+			for (int i = 0; i < 10000; i++)
+			{
+				bool b = rand.NextBool();
+
+				if (b)
+				{
+					t++;
+				}
+				else
+				{
+					f++;
+				}
+			}
+
+			VersatileIO.WriteComplex("&aTRUE: {0}\n&cFALSE: {1}".Fmt(t, f), '&');
+			long elapsedTicks = DateTime.Now.Ticks - time;
+			TimeSpan dtime = TimeSpan.FromTicks(elapsedTicks);
+			VersatileIO.WriteLine("Elapsed time: {0} ms".Fmt(dtime.TotalMilliseconds));
 		}
 
 		private static void TestVersatileIO()

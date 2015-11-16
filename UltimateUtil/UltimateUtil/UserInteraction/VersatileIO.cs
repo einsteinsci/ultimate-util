@@ -183,6 +183,8 @@ namespace UltimateUtil.UserInteraction
 			{
 				Write(currentPart, currentColor);
 			}
+
+			WriteLine();
 		}
 
 		/// <summary>
@@ -216,7 +218,7 @@ namespace UltimateUtil.UserInteraction
 		/// by replacing formatter parts (such as <c>{0}</c>) with codes for the given colors,
 		/// transforming the text from then onward to the specified color.
 		/// </summary>
-		/// <param name="text">Text to write</param>
+		/// <param name="text">Text to write after formatting</param>
 		/// <param name="colors">Colors to format text into</param>
 		/// <example>
 		/// <c>WriteComplex("{0}RED {1}BLUE {2}GREEN", ConsoleColor.Red, ConsoleColor.Blue, ConsoleColor.Green);</c>

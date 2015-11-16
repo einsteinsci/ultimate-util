@@ -103,7 +103,32 @@ namespace UltimateUtil
 		/// <returns>1 if <c>true</c>, 0 if <c>false</c></returns>
 		public static int ToInt(this bool b)
 		{
-			return b ? 0 : 1;
+			return b ? 1 : 0;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="bool?"/> into an <see cref="int"/>.
+		/// </summary>
+		/// <param name="b">Nullable boolean to convert</param>
+		/// <returns>1 if <c>true</c>, -1 if <c>false</c>, 0 if <c>null</c></returns>
+		public static int ToInt(this bool? b)
+		{
+			if (b == null)
+			{
+				return 0;
+			}
+
+			return b.Value ? 1 : -1;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="bool?"/> into a <see cref="byte"/>.
+		/// </summary>
+		/// <param name="b">Nullable boolean to convert</param>
+		/// <returns>1 if <c>true</c>, -1 if <c>false</c>, 0 if <c>null</c></returns>
+		public static sbyte ToSByte(this bool? b)
+		{
+			return (sbyte)b.ToInt();
 		}
 
 		/// <summary>
@@ -118,7 +143,7 @@ namespace UltimateUtil
 			{
 				return true;
 			}
-			else if (str == "no" || str == "n" || str == "false" || str == "0")
+			else if (str == "no" || str == "n" || str == "false" || str == "0" || str == "-1")
 			{
 				return false;
 			}
@@ -127,7 +152,7 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
-		/// Tries to parse bool by "looser definitions
+		/// Tries to parse a bool by "looser" definitions
 		/// </summary>
 		/// <param name="input">Input string to parse</param>
 		/// <param name="result">Resulting boolean (<c>false</c> if parsing failed)</param>
