@@ -14,13 +14,7 @@ namespace UltimateUtil.Test
 			PresetsLogger.Initialize();
 			Logger log = Logger.Instance;
 
-			log.Debug("Debug text");
-			log.Info("Info text");
-			log.Success("Success text");
-			log.Warning("Warning text");
-			log.Error("Error text");
-			log.Fatal("Fatal text");
-			log.Interface("Interface text");
+			
 
 			Console.ReadKey();
 		}

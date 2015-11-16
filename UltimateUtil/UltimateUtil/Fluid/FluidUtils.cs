@@ -35,21 +35,7 @@ namespace UltimateUtil.Fluid
 
 			return true;
 		}
-		/// <summary>
-		/// [FLUID] Runs a <c>foreach</c> loop on an <see cref="IEnumerable{T}"/>.
-		/// </summary>
-		/// <typeparam name="T">Collection type</typeparam>
-		/// <param name="iterated"><see cref="IEnumerable{T}"/> to iterate over</param>
-		/// <param name="action">Action to apply to each element. Return to <c>continue</c>.</param>
-		public static void ForEach<T>(this IEnumerable<T> iterated, Action<T> action)
-		{
-			IEnumerator<T> i = iterated.GetEnumerator();
-			while (i.MoveNext())
-			{
-				action(i.Current);
-			}
-		}
-
+		
 		/// <summary>
 		/// [FLUID] Runs a <c>foreach</c> loop over an <see cref="IDictionary{TKey, TValue}"/>.
 		/// </summary>
@@ -87,33 +73,7 @@ namespace UltimateUtil.Fluid
 
 			return true;
 		}
-
-		/// <summary>
-		/// [FLUID] Casts an object to a type in the traditional way, throwing an exception
-		/// if it cannot be cast.
-		/// </summary>
-		/// <typeparam name="T">Type to cast to</typeparam>
-		/// <param name="obj">Object to cast</param>
-		/// <returns><c>(<typeparamref name="T"/>)<paramref name="obj"/></c></returns>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <c>null</c></exception>
-		/// <exception cref="InvalidCastException">
-		/// Thrown if <paramref name="obj"/> cannot be cast to <typeparamref name="T"/>
-		/// </exception>
-		public static T CastThrow<T>(this object obj)
-		{
-			if (obj == null)
-			{
-				throw new ArgumentNullException(nameof(obj));
-			}
-
-			if (obj is T)
-			{
-				return (T)obj;
-			}
-
-			throw new InvalidCastException("Cannot cast {0} to {1}."
-				.Fmt(obj.GetType().FullName, typeof(T).FullName));
-		}
+		
 		/// <summary>
 		/// [FLUID] Casts an object to a type using the <c>as</c> keyword, returning <c>null</c>
 		/// if it cannot be cast.
@@ -129,27 +89,6 @@ namespace UltimateUtil.Fluid
 			}
 
 			return obj as T;
-		}
-		/// <summary>
-		/// [FLUID] Casts an object to a type in the traditional way, but returns the default value
-		/// if it cannot be cast.
-		/// </summary>
-		/// <typeparam name="T">Type to cast to</typeparam>
-		/// <param name="obj">Object to cast</param>
-		/// <returns>
-		/// <c>(<typeparamref name="T"/>)<paramref name="obj"/></c>, or <c>default(<typeparamref name="T"/>)</c>
-		/// if casting fails
-		/// </returns>
-		public static T CastOrDefault<T>(this object obj) where T : struct
-		{
-			try
-			{
-				return obj.CastThrow<T>();
-			}
-			catch (InvalidCastException)
-			{
-				return default(T);
-			}
 		}
 
 		/// <summary>
@@ -240,10 +179,13 @@ namespace UltimateUtil.Fluid
 		/// </summary>
 		/// <typeparam name="T">Type of object to affect</typeparam>
 		/// <param name="obj">Object to affect, passed by reference</param>
-		/// <param name="applied">Things to do with <paramref name="obj"/></param>
-		public static void With<T>(ref T obj, Action<T> applied) where T : struct
+		/// <param name="applied">
+		/// Things to do with <paramref name="obj"/>. Return the argument as a result
+		/// when finished.
+		/// </param>
+		public static void With<T>(ref T obj, Func<T, T> applied) where T : struct
 		{
-			applied(obj);
+			obj = applied(obj);
 		}
 
 		/// <summary>

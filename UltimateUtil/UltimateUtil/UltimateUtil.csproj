@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooleanUtil.cs" />
-    <Compile Include="Box.cs" />
     <Compile Include="CollectionUtil.cs" />
     <Compile Include="ConversionUtil.cs" />
     <Compile Include="EnumUtils.cs" />

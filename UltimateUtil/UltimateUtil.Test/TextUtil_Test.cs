@@ -10,9 +10,6 @@ namespace UltimateUtil.Test
 	[TestClass]
 	public class TextUtil_Test
 	{
-		public TextUtil_Test()
-		{ }
-
 		[TestMethod, TestCategory("text")]
 		public void IsNullOrEmpty()
 		{
