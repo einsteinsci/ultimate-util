@@ -1,2 +1,2 @@
-# ultimate-util
-Every utility class and extension method you've ever wanted.
+# UltimateUtil
+A bunch of utility classes and patterns I find myself using a lot.
