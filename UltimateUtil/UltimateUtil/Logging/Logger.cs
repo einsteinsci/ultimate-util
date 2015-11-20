@@ -13,12 +13,17 @@ namespace UltimateUtil.Logging
 	public enum LogLevel
 	{
 		/// <summary>
-		/// Lowest <see cref="LogLevel"/>. Used for complex debugging operations.
-		/// Production level code should default to hide this level.
+		/// Lowest <see cref="LogLevel"/>. Used for verbose logging for complex 
+		/// debugging operations. Production level code should default to hide this level.
 		/// </summary>
-		Debug = 0,
+		Verbose = 0,
 		/// <summary>
-		/// Denotes low-level information with minor importance and neutral tone.
+		/// Denotes low-level information that is used to debug operations that are not
+		/// acting as expected. Production level code should default to hide this level.
+		/// </summary>
+		Debug,
+		/// <summary>
+		/// Denotes information with minor importance and neutral tone.
 		/// </summary>
 		Info,
 		/// <summary>
@@ -255,6 +260,24 @@ namespace UltimateUtil.Logging
 		}
 
 		#region level log methods
+		/// <summary>
+		/// Logs a line of text at <see cref="LogLevel.Verbose"/>.
+		/// </summary>
+		/// <param name="text">Verbose debug text to log</param>
+		/// <param name="formatArgs">Format parameters for <see cref="string.Format(string, object[])"/></param>
+		public void Verbose(string text, params object[] formatArgs)
+		{
+			LogLine(LogLevel.Verbose, text, formatArgs);
+		}
+		/// <summary>
+		/// Logs a line of text at <see cref="LogLevel.Verbose"/> through <see cref="Instance"/>.
+		/// </summary>
+		/// <param name="text">Verbose debug text to log</param>
+		/// <param name="formatArgs">Format parameters for <see cref="string.Format(string, object[])"/></param>
+		public static void LogVerbose(string text, params object[] formatArgs)
+		{
+			Instance.Verbose(text, formatArgs);
+		}
 		/// <summary>
 		/// Logs a line of text at <see cref="LogLevel.Debug"/>.
 		/// </summary>

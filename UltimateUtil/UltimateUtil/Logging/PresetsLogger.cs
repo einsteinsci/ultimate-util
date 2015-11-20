@@ -73,24 +73,26 @@ namespace UltimateUtil.Logging
 		{
 			switch (level)
 			{
-				case LogLevel.Debug:
-					return ConsoleColor.DarkGray;
-				case LogLevel.Info:
-					return ConsoleColor.Gray;
-				case LogLevel.Interface:
-					return ConsoleColor.White;
-				case LogLevel.Success:
-					return ConsoleColor.Green;
-				case LogLevel.Warning:
-					return ConsoleColor.Yellow;
-				case LogLevel.Error:
-					return ConsoleColor.Red;
-				case LogLevel.Fatal:
-					return ConsoleColor.DarkRed;
-				case LogLevel.BlockAllLogging:
-					return ConsoleColor.DarkMagenta;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(level));
+			case LogLevel.Verbose:
+				return ConsoleColor.DarkGray;
+			case LogLevel.Debug:
+				return ConsoleColor.Gray;
+			case LogLevel.Info:
+				return ConsoleColor.White;
+			case LogLevel.Interface:
+				return ConsoleColor.Blue;
+			case LogLevel.Success:
+				return ConsoleColor.Green;
+			case LogLevel.Warning:
+				return ConsoleColor.Yellow;
+			case LogLevel.Error:
+				return ConsoleColor.Red;
+			case LogLevel.Fatal:
+				return ConsoleColor.DarkRed;
+			case LogLevel.BlockAllLogging:
+				return ConsoleColor.DarkMagenta;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(level));
 			}
 		}
 		

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UltimateUtil.Logging;
 
 namespace UltimateUtil.UserInteraction
 {
@@ -63,6 +64,20 @@ namespace UltimateUtil.UserInteraction
 	public static class VersatileIO
 	{
 		/// <summary>
+		/// Set the values to set the default colors of VersatileIO logging by level.
+		/// Remove a key to disable logging for that level.
+		/// </summary>
+		public static Dictionary<LogLevel, ConsoleColor> LevelColors
+		{ get; private set; }
+
+		/// <summary>
+		/// Minimum level at which to output by level. Has no effect on output by color.
+		/// Levels below this are not written.
+		/// </summary>
+		public static LogLevel MinLogLevel
+		{ get; set; }
+
+		/// <summary>
 		/// Subscribe to allow full-line output. Be sure the newline comes after
 		/// the message, not before.
 		/// </summary>
@@ -97,6 +112,41 @@ namespace UltimateUtil.UserInteraction
 		{ get; set; }
 
 		/// <summary>
+		/// Initializes output by level. Not necessary for output by color and input methods.
+		/// </summary>
+		/// <param name="alternateColors">Alternate color scheme to use instead of default</param>
+		/// <remarks>
+		/// Default color scheme:
+		/// <c>
+		/// new Dictionary&lt;LogLevel, ConsoleColor&gt;() {
+		/// { LogLevel.Verbose, ConsoleColor.DarkGray },
+		///	{ LogLevel.Debug, ConsoleColor.Gray },
+		///	{ LogLevel.Info, ConsoleColor.White },
+		///	{ LogLevel.Success, ConsoleColor.Green },
+		///	{ LogLevel.Warning, ConsoleColor.Yellow },
+		///	{ LogLevel.Interface, ConsoleColor.Blue },
+		///	{ LogLevel.Error, ConsoleColor.Red },
+		///	{ LogLevel.Fatal, ConsoleColor.DarkRed } }
+		/// </c>
+		/// </remarks>
+		public static void InitializeLevels(Dictionary<LogLevel, ConsoleColor> alternateColors = null)
+		{
+			LevelColors = alternateColors ?? new Dictionary<LogLevel, ConsoleColor>()
+			{
+				{ LogLevel.Verbose, ConsoleColor.DarkGray },
+				{ LogLevel.Debug, ConsoleColor.Gray },
+				{ LogLevel.Info, ConsoleColor.White },
+				{ LogLevel.Success, ConsoleColor.Green },
+				{ LogLevel.Warning, ConsoleColor.Yellow },
+				{ LogLevel.Interface, ConsoleColor.Blue },
+				{ LogLevel.Error, ConsoleColor.Red },
+				{ LogLevel.Fatal, ConsoleColor.DarkRed }
+			};
+
+			MinLogLevel = LogLevel.Info;
+		}
+
+		/// <summary>
 		/// Writes a line of text using the output event <see cref="OnLogLine"/>.
 		/// </summary>
 		/// <param name="text">Text to output, excluding the trailing newline</param>
@@ -122,6 +172,104 @@ namespace UltimateUtil.UserInteraction
 		}
 
 		/// <summary>
+		/// Writes a line of text via <see cref="WriteLine(string, ConsoleColor)"/>, coloring by
+		/// a given <see cref="LogLevel"/> as according to <see cref="LevelColors"/>.
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="level">Level at which to write</param>
+		/// <remarks>
+		/// If <paramref name="level"/> is a lower level than <see cref="MinLogLevel"/>, the method
+		/// will return and nothing will be output.
+		/// </remarks>
+		public static void WriteLineLevel(string text, LogLevel level, params object[] args)
+		{
+			if (level < MinLogLevel)
+			{
+				return;
+			}
+
+			if (LevelColors.ContainsKey(level))
+			{
+				string outputLine = text;
+				try
+				{
+					outputLine = text.Fmt(args);
+				}
+				catch (FormatException)
+				{ }
+
+				ConsoleColor color = LevelColors[level];
+				WriteLine(outputLine, color);
+			}
+		}
+
+		#region Output by Level
+		/// <summary>
+		/// Logs a line of text by the <see cref="LogLevel.Verbose"/> level
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="args">Formatting args</param>
+		public static void Verbose(string text, params object[] args)
+		{
+			WriteLineLevel(text, LogLevel.Verbose, args);
+		}
+		/// <summary>
+		/// Logs a line of text by the <see cref="LogLevel.Verbose"/> level
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="args">Formatting args</param>
+		public static void Debug(string text, params object[] args)
+		{
+			WriteLineLevel(text, LogLevel.Debug, args);
+		}
+		/// <summary>
+		/// Logs a line of text by the <see cref="LogLevel.Info"/> level
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="args">Formatting args</param>
+		public static void Info(string text, params object[] args)
+		{
+			WriteLineLevel(text, LogLevel.Info, args);
+		}
+		/// <summary>
+		/// Logs a line of text by the <see cref="LogLevel.Success"/> level
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="args">Formatting args</param>
+		public static void Success(string text, params object[] args)
+		{
+			WriteLineLevel(text, LogLevel.Success, args);
+		}
+		/// <summary>
+		/// Logs a line of text by the <see cref="LogLevel.Warning"/> level
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="args">Formatting args</param>
+		public static void Warning(string text, params object[] args)
+		{
+			WriteLineLevel(text, LogLevel.Warning, args);
+		}
+		/// <summary>
+		/// Logs a line of text by the <see cref="LogLevel.Error"/> level
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="args">Formatting args</param>
+		public static void Error(string text, params object[] args)
+		{
+			WriteLineLevel(text, LogLevel.Error, args);
+		}
+		/// <summary>
+		/// Logs a line of text by the <see cref="LogLevel.Fatal"/> level
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="args">Formatting args</param>
+		public static void Fatal(string text, params object[] args)
+		{
+			WriteLineLevel(text, LogLevel.Fatal, args);
+		}
+		#endregion
+
+		/// <summary>
 		/// Writes a line of text with formatting codes for color, patterned after Minecraft chat
 		/// </summary>
 		/// <param name="text">Text to write</param>
@@ -130,7 +278,7 @@ namespace UltimateUtil.UserInteraction
 		/// <c>WriteComplex("\cRED \9BLUE \aGREEN");</c> prints "RED " in red text, followed by
 		/// "BLUE " in blue text, followed by "GREEN" in green text.
 		/// </example>
-		public static void WriteComplex(string text, char escape = '\\')
+		public static void WriteComplex(string text, char escape = '&')
 		{
 			List<string> parts = new List<string>();
 			string currentPart = "";
@@ -226,7 +374,7 @@ namespace UltimateUtil.UserInteraction
 		/// </example>
 		public static void WriteComplex(string text, params ConsoleColor[] colors)
 		{
-			WriteComplex(text, '\\', colors);
+			WriteComplex(text, '\u00A7', colors);
 		}
 
 		/// <summary>

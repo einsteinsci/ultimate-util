@@ -40,6 +40,8 @@ namespace UltimateUtil.UserInteraction
 			PromptColor = promptColor;
 			BePersistent = bePersistent;
 
+			VersatileIO.InitializeLevels();
+
 			VersatileIO.OnLogPart += OnLogPart;
 			VersatileIO.OnLogLine += OnLogLine;
 			VersatileIO.OnGetString = GetString;

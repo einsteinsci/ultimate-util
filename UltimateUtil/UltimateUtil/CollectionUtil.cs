@@ -83,6 +83,17 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
+		/// Whether the collection has items, without needing <c>Count() != 0</c>
+		/// </summary>
+		/// <typeparam name="T">Collection type</typeparam>
+		/// <param name="collection">Collection to check</param>
+		/// <returns><c>true</c> if the collection has one or more items, <c>false</c> if not</returns>
+		public static bool HasItems<T>(this IEnumerable<T> collection)
+		{
+			return collection.Count() != 0;
+		}
+
+		/// <summary>
 		/// Whether the collection is <c>null</c> or empty.
 		/// </summary>
 		/// <typeparam name="T">Collection type</typeparam>
