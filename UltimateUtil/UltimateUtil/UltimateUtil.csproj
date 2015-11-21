@@ -46,6 +46,7 @@
     <Compile Include="CollectionUtil.cs" />
     <Compile Include="ConversionUtil.cs" />
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="Fluid\FlaggedResult.cs" />
     <Compile Include="Fluid\FluidUtils.cs" />
     <Compile Include="Logging\LogEventArgs.cs" />
     <Compile Include="Logging\Logger.cs" />
