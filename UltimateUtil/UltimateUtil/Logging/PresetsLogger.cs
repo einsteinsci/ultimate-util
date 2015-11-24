@@ -48,7 +48,7 @@ namespace UltimateUtil.Logging
 			switch (preset)
 			{
 				case LoggerPresetType.Console:
-					PresetVersatileConsoleIO.Initialize(LogLevel.Interface.GetLevelColor());
+					var versatile = new PresetVersatileConsoleIO(LogLevel.Interface.GetLevelColor());
 					Logger.Logging += (s, e) => VersatileIO.WriteLine(e.Message, e.Level.GetLevelColor());
 					Logger.LoggingPart += (s, e) => VersatileIO.Write(e.Message, e.Level.GetLevelColor());
 					break;

@@ -20,7 +20,7 @@ namespace UltimateUtil
 		/// <typeparam name="T">Enum in which to search</typeparam>
 		/// <param name="value">Value of enum</param>
 		/// <returns>
-		/// The description applied to <see cref="value"/>, or <c><paramref name="value"/>.ToString()</c>
+		/// The description applied to <paramref name="value"/>, or <c><paramref name="value"/>.ToString()</c>
 		/// if none is applied.
 		/// </returns>
 		public static string GetDescription<T>(this T value) where T : struct

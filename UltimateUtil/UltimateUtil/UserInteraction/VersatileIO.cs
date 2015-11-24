@@ -13,16 +13,35 @@ namespace UltimateUtil.UserInteraction
 	/// </summary>
 	public enum InteractionType
 	{
+		/// <summary>
+		/// Interaction that outputs a <see cref="string"/> of text
+		/// </summary>
 		LogPart,
+		/// <summary>
+		/// Interaction that outputs a <see cref="string"/> with a newline following it
+		/// </summary>
 		LogLine,
+		/// <summary>
+		/// Interaction that gets a <see cref="string"/> from the user
+		/// </summary>
 		InputString,
+		/// <summary>
+		/// Interaction that gets a <see cref="double"/> from the user
+		/// </summary>
 		InputNumber,
+		/// <summary>
+		/// Interaction that gets a selection from a list of choices displayed to the user
+		/// </summary>
 		Selection,
+		/// <summary>
+		/// Interaction that gets a selection from a list of choices displayed to the user,
+		/// with the option to skip (returning <c>null</c>)
+		/// </summary>
 		OptionalSelection,
 	}
 
 	/// <summary>
-	/// Delegate for sending a line of information to the user.
+	/// Delegate for sending a line of information to the user. The newline comes after the text.
 	/// </summary>
 	/// <param name="text">Line of text to send</param>
 	/// <param name="color">Color of line. Ignore if inapplicable.</param>
@@ -50,6 +69,9 @@ namespace UltimateUtil.UserInteraction
 	/// <summary>
 	/// Delegate for retrieving a selection from a list of options from the user.
 	/// </summary>
+	/// <param name="prompt">
+	/// Text to display to the user once all the choices are listed.
+	/// </param>
 	/// <param name="options">
 	/// Dictionary of items to select from. Keys denote shortcut codes for the items, while values 
 	/// are what is listed when getting the selection.
@@ -81,12 +103,14 @@ namespace UltimateUtil.UserInteraction
 		/// Subscribe to allow full-line output. Be sure the newline comes after
 		/// the message, not before.
 		/// </summary>
-		public static event SendLog OnLogLine;
+		public static SendLog OnLogLine
+		{ get; set; }
 		/// <summary>
 		/// Subscribe to allow partial-line (and complex) output. A null color
 		/// parameter implies to use the color of the last output.
 		/// </summary>
-		public static event SendLogPart OnLogPart;
+		public static SendLogPart OnLogPart
+		{ get; set; }
 
 		/// <summary>
 		/// Set this to determine how string input is retrieved.
@@ -110,6 +134,13 @@ namespace UltimateUtil.UserInteraction
 		/// </summary>
 		public static GetSelection OnGetIgnorableSelection
 		{ get; set; }
+
+		/// <summary>
+		/// The current handler if a handler is used. <c>null</c> if manual subscription
+		/// is done. Set with <see cref="SetHandler(VersatileHandlerBase, bool)"/>.
+		/// </summary>
+		public static VersatileHandlerBase CurrentHandler
+		{ get; private set; }
 
 		/// <summary>
 		/// Initializes output by level. Not necessary for output by color and input methods.
@@ -147,6 +178,57 @@ namespace UltimateUtil.UserInteraction
 		}
 
 		/// <summary>
+		/// Sets the <see cref="CurrentHandler"/> by initializing it and pointing
+		/// <see cref="VersatileIO"/> to its methods.
+		/// </summary>
+		/// <param name="handler">Handler to subscribe</param>
+		/// <param name="message">Whether to display a message when initialization is complete.</param>
+		public static void SetHandler(VersatileHandlerBase handler, bool message = true)
+		{
+			handler.InitializeIO();
+
+			if (message)
+			{
+				Debug("VersatileIO handler set.");
+			}
+		}
+		/// <summary>
+		/// Sets the <see cref="CurrentHandler"/> by instantiating and initializing
+		/// it, and pointing <see cref="VersatileIO"/> to its methods.
+		/// </summary>
+		/// <param name="handlerType">Type of handler to subscribe</param>
+		/// <param name="message">Whether to display a message when initialization is complete.</param>
+		public static void SetHandler(Type handlerType, bool message = true)
+		{
+			if (!handlerType.InheritsFrom<VersatileHandlerBase>())
+			{
+				throw new ArgumentException("{0} must inherit from {1}.".Fmt(
+					nameof(handlerType), nameof(VersatileHandlerBase)));
+			}
+
+			try
+			{
+				object obj = Activator.CreateInstance(handlerType);
+				VersatileHandlerBase h = obj as VersatileHandlerBase;
+				SetHandler(h, message);
+			}
+			catch (MissingMethodException)
+			{
+				throw new ArgumentException("Handler does not have a parameterless constructor.");
+			}
+		}
+		/// <summary>
+		/// Sets the <see cref="CurrentHandler"/> by instantiating and initializing
+		/// it, and pointing <see cref="VersatileIO"/> to its methods.
+		/// </summary>
+		/// <typeparam name="THandler">Type of handler to subscribe</typeparam>
+		/// <param name="message">Whether to display a message when initialization is complete</param>
+		public static void SetHandler<THandler>(bool message = true)
+		{
+			SetHandler(typeof(THandler));
+		}
+
+		/// <summary>
 		/// Writes a line of text using the output event <see cref="OnLogLine"/>.
 		/// </summary>
 		/// <param name="text">Text to output, excluding the trailing newline</param>
@@ -177,6 +259,7 @@ namespace UltimateUtil.UserInteraction
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="level">Level at which to write</param>
+		/// <param name="args">Arguments supplied for <see cref="string.Format(string, object[])"/></param>
 		/// <remarks>
 		/// If <paramref name="level"/> is a lower level than <see cref="MinLogLevel"/>, the method
 		/// will return and nothing will be output.
@@ -205,7 +288,7 @@ namespace UltimateUtil.UserInteraction
 
 		#region Output by Level
 		/// <summary>
-		/// Logs a line of text by the <see cref="LogLevel.Verbose"/> level
+		/// Logs a line of text by the <see cref="F:UltimateUtil.Logging.LogLevel.Verbose">LogLevel.Verbose</see> level
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="args">Formatting args</param>
@@ -214,7 +297,7 @@ namespace UltimateUtil.UserInteraction
 			WriteLineLevel(text, LogLevel.Verbose, args);
 		}
 		/// <summary>
-		/// Logs a line of text by the <see cref="LogLevel.Verbose"/> level
+		/// Logs a line of text by the <see cref="F:UltimateUtil.Logging.LogLevel.Debug">LogLevel.Debug</see> level
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="args">Formatting args</param>
@@ -223,7 +306,7 @@ namespace UltimateUtil.UserInteraction
 			WriteLineLevel(text, LogLevel.Debug, args);
 		}
 		/// <summary>
-		/// Logs a line of text by the <see cref="LogLevel.Info"/> level
+		/// Logs a line of text by the <see cref="F:UltimateUtil.Logging.LogLevel.Info">LogLevel.Info</see> level
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="args">Formatting args</param>
@@ -232,7 +315,7 @@ namespace UltimateUtil.UserInteraction
 			WriteLineLevel(text, LogLevel.Info, args);
 		}
 		/// <summary>
-		/// Logs a line of text by the <see cref="LogLevel.Success"/> level
+		/// Logs a line of text by the <see cref="F:UltimateUtil.Logging.LogLevel.Success">LogLevel.Success</see> level
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="args">Formatting args</param>
@@ -241,7 +324,7 @@ namespace UltimateUtil.UserInteraction
 			WriteLineLevel(text, LogLevel.Success, args);
 		}
 		/// <summary>
-		/// Logs a line of text by the <see cref="LogLevel.Warning"/> level
+		/// Logs a line of text by the <see cref="F:UltimateUtil.Logging.LogLevel.Warning">LogLevel.Warning</see> level
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="args">Formatting args</param>
@@ -250,7 +333,7 @@ namespace UltimateUtil.UserInteraction
 			WriteLineLevel(text, LogLevel.Warning, args);
 		}
 		/// <summary>
-		/// Logs a line of text by the <see cref="LogLevel.Error"/> level
+		/// Logs a line of text by the <see cref="F:UltimateUtil.Logging.LogLevel.Error">LogLevel.Error</see> level
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="args">Formatting args</param>
@@ -259,7 +342,7 @@ namespace UltimateUtil.UserInteraction
 			WriteLineLevel(text, LogLevel.Error, args);
 		}
 		/// <summary>
-		/// Logs a line of text by the <see cref="LogLevel.Fatal"/> level
+		/// Logs a line of text by the <see cref="F:UltimateUtil.Logging.LogLevel.Fatal">LogLevel.Fatal</see> level
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="args">Formatting args</param>
@@ -506,7 +589,7 @@ namespace UltimateUtil.UserInteraction
 		/// <param name="prompt">Text to display as a prompt</param>
 		/// <param name="ignorable">Whether the selection can be ignored by the user</param>
 		/// <param name="args">Available options to display the user, alternating between key and value.</param>
-		/// <returns>The key of the selected item in <paramref name="options"/>, or <c>null</c> if ignored by user.</returns>
+		/// <returns>The key of the selected item in <paramref name="args"/>, or <c>null</c> if ignored by user.</returns>
 		public static string GetSelection(string prompt, bool ignorable, params object[] args)
 		{
 			return GetSelection(prompt, ignorable, new List<object>(), args);
@@ -568,7 +651,7 @@ namespace UltimateUtil.UserInteraction
 		/// <returns>Result of the interaction, null if interaction is not input.</returns>
 		/// <remarks>
 		/// If <paramref name="interactionType"/> is <see cref="InteractionType.InputNumber"/>, then
-		/// <see cref="TryGetNumber(string)"/> will be called, and a <see cref="double?"/> will be
+		/// <see cref="TryGetNumber(string)"/> will be called, and a <see cref="Nullable{Double}"/> will be
 		/// returned.
 		/// 
 		/// If <paramref name="interactionType"/> is <see cref="InteractionType.Selection"/> or

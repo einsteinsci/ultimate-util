@@ -33,7 +33,7 @@ namespace UltimateUtil.Registries
 		}
 
 		/// <summary>
-		/// Loads all items applied with <see cref="TAtt"/> within the calling
+		/// Loads all items applied with <typeparamref name="TAtt"/> within the calling
 		/// <see cref="Assembly"/> via reflection.
 		/// </summary>
 		public void Load()
@@ -41,7 +41,7 @@ namespace UltimateUtil.Registries
 			Load(Assembly.GetCallingAssembly());
 		}
 		/// <summary>
-		/// Loads all items applied with <see cref="TAtt"/> within a given
+		/// Loads all items applied with <typeparamref name="TAtt"/> within a given
 		/// <see cref="Assembly"/> via reflection
 		/// </summary>
 		/// <param name="assembly">Assembly from where to search for registered classes</param>
@@ -53,13 +53,14 @@ namespace UltimateUtil.Registries
 			}
 		}
 		/// <summary>
-		/// Tries to register a <see cref="Type"/> that inherits from <see cref="TValue"/>,
+		/// Tries to register a <see cref="Type"/> that inherits from <typeparamref name="TValue"/>,
 		/// using <see cref="Activator.CreateInstance(Type)"/>.
 		/// </summary>
 		/// <param name="t">Type of item to register</param>
 		/// <returns>
-		/// <c>true</c> if registry was successful, <c>false</c> if there was something already 
-		/// registered under the key, or if <paramref name="t"/> does not inherit from <see cref="TValue"/>.
+		/// <c>true</c> if registry was successful, <c>false</c> if there was something 
+		/// already registered under the key, or if <paramref name="t"/> does not inherit 
+		/// from <typeparamref name="TValue"/>.
 		/// </returns>
 		public virtual bool TryRegisterType(Type t)
 		{
@@ -83,7 +84,7 @@ namespace UltimateUtil.Registries
 			return false;
 		}
 		/// <summary>
-		/// Tries to register a <see cref="Type"/> that inherits from <see cref="TValue"/>,
+		/// Tries to register a <see cref="Type"/> that inherits from <typeparamref name="TValue"/>,
 		/// using <see cref="Activator.CreateInstance(Type)"/>.
 		/// </summary>
 		/// <typeparam name="TReg">Type of item to register</typeparam>

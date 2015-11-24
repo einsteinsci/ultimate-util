@@ -244,6 +244,15 @@ namespace UltimateUtil
 			return inherited.IsAssignableFrom(inheriting);
 		}
 
+		/// <summary>
+		/// This makes more sense than <see cref="Type.IsAssignableFrom(Type)"/>.
+		/// </summary>
+		/// <typeparam name="TBase">Type that is to be tested as the base class</typeparam>
+		/// <param name="inheriting">Type that is to be tested as the subclass</param>
+		/// <returns>
+		/// <c>true</c> if <paramref name="inheriting"/> inherits from
+		/// <typeparamref name="TBase"/>, <c>false</c> if not.
+		/// </returns>
 		public static bool InheritsFrom<TBase>(this Type inheriting)
 		{
 			return inheriting.InheritsFrom(typeof(TBase));

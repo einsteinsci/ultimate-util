@@ -10,49 +10,32 @@ namespace UltimateUtil.UserInteraction
 	/// Provides an example implementation of <see cref="VersatileIO"/> delegates
 	/// for the <see cref="Console"/>.
 	/// </summary>
-	public static class PresetVersatileConsoleIO
+	public class PresetVersatileConsoleIO : VersatileHandlerBase
 	{
 		/// <summary>
 		/// Color to use in user prompts
 		/// </summary>
-		public static ConsoleColor PromptColor
+		public ConsoleColor PromptColor
 		{ get; set; }
 
 		/// <summary>
 		/// Whether to continue asking if the user enters invalid input. If set to
 		/// <c>false</c>, the method will default to <see cref="double.NaN"/> or <c>null</c>.
 		/// </summary>
-		public static bool BePersistent
+		public bool BePersistent
 		{ get; set; }
 
 		/// <summary>
-		/// Initializes <see cref="VersatileIO"/> to the console presets in this class.
+		/// Creates a new instance of <see cref="PresetVersatileConsoleIO"/> and prepares 
+		/// <see cref="VersatileIO"/> for logging.
 		/// </summary>
-		/// <param name="promptColor">Color to use in user prompts</param>
-		/// <param name="bePersistent">
-		/// Whether to continue asking if the user enters invalid input. If set to <c>false</c>, 
-		/// the method will default to <see cref="double.NaN"/> or <c>null</c>.
-		/// </param>
-		/// <param name="initializedMessage">Whether to log an initialization message.</param>
-		public static void Initialize(ConsoleColor promptColor = ConsoleColor.White, 
-			bool bePersistent = true, bool initializedMessage = true)
+		/// <param name="promptColor">Color to use in prompts</param>
+		/// <param name="bePersistent">Whether to be persistent in prompts</param>
+		public PresetVersatileConsoleIO(ConsoleColor promptColor = ConsoleColor.White, 
+			bool bePersistent = true)
 		{
 			PromptColor = promptColor;
 			BePersistent = bePersistent;
-
-			VersatileIO.InitializeLevels();
-
-			VersatileIO.OnLogPart += OnLogPart;
-			VersatileIO.OnLogLine += OnLogLine;
-			VersatileIO.OnGetString = GetString;
-			VersatileIO.OnGetNumber = GetDouble;
-			VersatileIO.OnGetSelection = GetSelection;
-			VersatileIO.OnGetIgnorableSelection = GetSelectionIgnorable;
-
-			if (initializedMessage)
-			{
-				VersatileIO.WriteLine("Logger initialized", ConsoleColor.Gray);
-			}
 		}
 
 		/// <summary>
@@ -60,7 +43,7 @@ namespace UltimateUtil.UserInteraction
 		/// </summary>
 		/// <param name="text">Text to log</param>
 		/// <param name="color">Color of text, <c>null</c> if not changed.</param>
-		public static void OnLogPart(string text, ConsoleColor? color)
+		public override void LogPart(string text, ConsoleColor? color)
 		{
 			if (color != null)
 			{
@@ -73,7 +56,7 @@ namespace UltimateUtil.UserInteraction
 		/// </summary>
 		/// <param name="line">Text to log</param>
 		/// <param name="color">Color of text</param>
-		public static void OnLogLine(string line, ConsoleColor color)
+		public override void LogLine(string line, ConsoleColor color)
 		{
 			Console.ForegroundColor = color;
 			Console.WriteLine(line);
@@ -84,7 +67,7 @@ namespace UltimateUtil.UserInteraction
 		/// </summary>
 		/// <param name="prompt">Text to prompt the user for input</param>
 		/// <returns>The resulting <see cref="string"/>.</returns>
-		public static string GetString(string prompt)
+		public override string GetString(string prompt)
 		{
 			Console.ForegroundColor = PromptColor;
 			Console.Write(prompt);
@@ -96,7 +79,7 @@ namespace UltimateUtil.UserInteraction
 		/// </summary>
 		/// <param name="prompt">Text to prompt the user for input</param>
 		/// <returns>The resulting <see cref="double"/>.</returns>
-		public static double GetDouble(string prompt)
+		public override double GetDouble(string prompt)
 		{
 			double d = double.NaN;
 
@@ -134,7 +117,7 @@ namespace UltimateUtil.UserInteraction
 		/// <param name="prompt">Dictionary of options and their respective keys</param>
 		/// <param name="options">Text given as a prompt after selections are listed.</param>
 		/// <returns>The key of the resulting item.</returns>
-		public static string GetSelection(string prompt, IDictionary<string, object> options)
+		public override string GetSelection(string prompt, IDictionary<string, object> options)
 		{
 			foreach (KeyValuePair<string, object> kvp in options)
 			{
@@ -172,7 +155,7 @@ namespace UltimateUtil.UserInteraction
 		/// <param name="prompt">Dictionary of options and their respective keys</param>
 		/// <param name="options">Text given as a prompt after selections are listed.</param>
 		/// <returns>The key of the resulting item.</returns>
-		public static string GetSelectionIgnorable(string prompt, IDictionary<string, object> options)
+		public override string GetSelectionIgnorable(string prompt, IDictionary<string, object> options)
 		{
 			foreach (KeyValuePair<string, object> kvp in options)
 			{
@@ -180,6 +163,7 @@ namespace UltimateUtil.UserInteraction
 				Console.WriteLine("  [{0}]: {1}", kvp.Key, kvp.Value);
 			}
 
+			Console.ForegroundColor = PromptColor;
 			Console.Write(prompt);
 			string input = Console.ReadLine();
 

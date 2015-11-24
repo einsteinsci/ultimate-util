@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace UltimateUtil.Registries
 {
 	/// <summary>
-	/// Interface for objects registered into an <see cref="IDynamicRegistry"/>,
+	/// Interface for objects registered into an <see cref="IDynamicRegistry{T}"/>,
 	/// which are usually singletons.
 	/// See also <seealso cref="IDynamicRegistry{T}"/>
 	/// </summary>

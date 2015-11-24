@@ -8,7 +8,7 @@ using UltimateUtil.Fluid;
 namespace UltimateUtil
 {
 	/// <summary>
-	/// Various utilities involving classes and interfaces that extend <see cref="IEnumerable"/>
+	/// Various utilities involving classes and interfaces that extend <see cref="IEnumerable{T}"/>
 	/// </summary>
 	public static class CollectionUtil
 	{
@@ -83,13 +83,21 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
-		/// Whether the collection has items, without needing <c>Count() != 0</c>
+		/// Whether the collection is not <c>null</c> and has items
 		/// </summary>
 		/// <typeparam name="T">Collection type</typeparam>
 		/// <param name="collection">Collection to check</param>
-		/// <returns><c>true</c> if the collection has one or more items, <c>false</c> if not</returns>
+		/// <returns>
+		/// <c>true</c> if <paramref name="collection"/> has one or more items, 
+		/// <c>false</c> if not, or if the <paramref name="collection"/> is <c>null</c>.
+		/// </returns>
 		public static bool HasItems<T>(this IEnumerable<T> collection)
 		{
+			if (collection == null)
+			{
+				return false;
+			}
+
 			return collection.Count() != 0;
 		}
 
@@ -503,6 +511,28 @@ namespace UltimateUtil
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> input)
 		{
 			return input ?? Enumerable.Empty<T>();
+		}
+
+		/// <summary>
+		/// Finds all values that match a given predicate in an <see cref="IEnumerable{T}"/>. 
+		/// Mirrors <see cref="List{T}.FindAll(Predicate{T})"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of collection</typeparam>
+		/// <param name="collection">Collection to search</param>
+		/// <param name="pred">Predicate marking whether to include a value</param>
+		/// <returns>
+		/// A collection of all values within <paramref name="collection"/> that 
+		/// match <paramref name="pred"/>.
+		/// </returns>
+		public static IEnumerable<T> FindAll<T>(this IEnumerable<T> collection, Predicate<T> pred)
+		{
+			foreach (T t in collection)
+			{
+				if (pred(t))
+				{
+					yield return t;
+				}
+			}
 		}
 
 		/// <summary>

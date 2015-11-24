@@ -25,14 +25,14 @@ namespace UltimateUtil.Registries
 		/// Indexer for retrieving an item from the registry.
 		/// </summary>
 		/// <param name="key">Key identifying the registered object</param>
-		/// <returns><see cref="T"/> registered under <paramref name="key"/></returns>
+		/// <returns><typeparamref name="T"/> registered under <paramref name="key"/></returns>
 		T this[string key]
 		{ get; }
 
 		/// <summary>
 		/// Method for adding an item to the <see cref="IDynamicRegistry{T}"/>.
 		/// </summary>
-		/// <param name="key">Key to register under. Usually <see cref="T.RegistryName"/>.</param>
+		/// <param name="key">Key to register under. Usually <see cref="IRegisterable.RegistryName"/>.</param>
 		/// <param name="item">Item to register.</param>
 		void Register(string key, T item);
 

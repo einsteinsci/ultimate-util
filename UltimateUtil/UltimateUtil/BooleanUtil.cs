@@ -107,7 +107,7 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
-		/// Converts a <see cref="bool?"/> into an <see cref="int"/>.
+		/// Converts a <see cref="Nullable{Boolean}"/> into an <see cref="int"/>.
 		/// </summary>
 		/// <param name="b">Nullable boolean to convert</param>
 		/// <returns>1 if <c>true</c>, -1 if <c>false</c>, 0 if <c>null</c></returns>
@@ -122,7 +122,7 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
-		/// Converts a <see cref="bool?"/> into a <see cref="byte"/>.
+		/// Converts a <see cref="Nullable{Boolean}"/> into a <see cref="byte"/>.
 		/// </summary>
 		/// <param name="b">Nullable boolean to convert</param>
 		/// <returns>1 if <c>true</c>, -1 if <c>false</c>, 0 if <c>null</c></returns>

@@ -177,11 +177,6 @@ namespace UltimateUtil.Logging
 			MinLogging = minLogLevel;
 			MinFileLogging = minFileLevel;
 		}
-		
-		~Logger()
-		{
-			Dispose(false);
-		}
 
 		/// <summary>
 		/// Logs a line of text through the log events, with a given Log level, text, 
@@ -437,7 +432,7 @@ namespace UltimateUtil.Logging
 		public void Dispose()
 		{
 			Dispose(true);
-			GC.SuppressFinalize(this);
+			//GC.SuppressFinalize(this);
 		}
 		/// <summary>
 		/// Disposes the current <see cref="IDisposable"/>, with the option to do so recursively.
@@ -453,6 +448,7 @@ namespace UltimateUtil.Logging
 				_fileSteam.Close();
 				_fileSteam.Dispose();
 			}
+			
 			_disposed = true;
 		}
 	}

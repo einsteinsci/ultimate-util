@@ -13,7 +13,8 @@ namespace UltimateUtil.Test
 	{
 		static void Main(string[] args)
 		{
-			PresetVersatileConsoleIO.Initialize();
+			PresetVersatileConsoleIO preset = new PresetVersatileConsoleIO();
+			VersatileIO.SetHandler(preset);
 
 			ReflectionUtil_Test test = new ReflectionUtil_Test();
 			test.TypesInNamespace();

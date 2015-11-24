@@ -132,8 +132,6 @@ namespace UltimateUtil.Test
 			[Thing]
 			public int value;
 
-			private string secret = "shh";
-
 			public A()
 			{ value = 4; }
 

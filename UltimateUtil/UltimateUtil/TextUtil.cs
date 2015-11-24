@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace UltimateUtil
 {
+	/// <summary>
+	/// Various utilities that involve <see cref="string"/> values.
+	/// </summary>
 	public static class TextUtil
 	{
 		/// <summary>
@@ -92,6 +95,18 @@ namespace UltimateUtil
 		public static char ToUpper(this char c)
 		{
 			return c.ToString().ToUpper()[0];
+		}
+
+		/// <summary>
+		/// Gets a substring by removing the amount of characters from the
+		/// start equal to the length of a given string.
+		/// </summary>
+		/// <param name="str">String to cut from</param>
+		/// <param name="removeStart">String whose length is used to generate a substring</param>
+		/// <returns><c><paramref name="str"/>.Substring(<paramref name="removeStart"/>.Length)</c></returns>
+		public static string Substring(this string str, string removeStart)
+		{
+			return str.Substring(removeStart.Length);
 		}
 
 		/// <summary>
