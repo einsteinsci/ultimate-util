@@ -23,6 +23,16 @@ namespace UltimateUtil
 		}
 
 		/// <summary>
+		/// Replaces all whitespace with spaces. Affects newlines and tabs.
+		/// </summary>
+		/// <param name="str">Affected string</param>
+		/// <returns><paramref name="str"/> with spaces instead of newlines and tabs</returns>
+		public static string NewlinesToSpaces(this string str)
+		{
+			return str.Replace(Environment.NewLine, " ").Replace('\n', ' ').Replace('\r', ' ').Replace('\t', ' ');
+		}
+
+		/// <summary>
 		/// Removes all instances of the specified characters
 		/// </summary>
 		/// <param name="str">Affected string</param>
