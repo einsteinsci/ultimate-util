@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
+
+namespace UltimateUtil
+{
+	/// <summary>
+	/// [WIP] Various utilities involving threading.
+	/// </summary>
+	public static class ThreadUtil
+	{
+		/// <summary>
+		/// Runs code on a separate thread after a delay.
+		/// </summary>
+		/// <param name="delay">Amount of time to delay the code</param>
+		/// <param name="todo">Code to run</param>
+		public static async Task RunDelayed(TimeSpan delay, Action todo)
+		{
+			await Task.Delay(delay);
+			todo();
+		}
+		/// <summary>
+		/// Runs code on a separate thread after a delay in miliseconds.
+		/// </summary>
+		/// <param name="milisecondsDelay">Amount of time to delay the code by, in miliseconds</param>
+		/// <param name="todo">Code to run</param>
+		public static async Task RunDelayed(double milisecondsDelay, Action todo)
+		{
+			await RunDelayed(TimeSpan.FromMilliseconds(milisecondsDelay), todo);
+		}
+	}
+}
